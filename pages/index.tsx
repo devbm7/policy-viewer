@@ -24,33 +24,21 @@ type Topic = {
 
 const exampleTopics: Topic[] = [
   {
-    name: "Non Standard Datasets",
+    name: "Conversions",
     subtopics: [
       {
-        name: "Scenario 1",
-        description: "This is the description for Scenario 1...",
-        goldenExampleThought: "This is the golden example thought for Scenario 1...",
-        goldenExampleRTU: "This is the golden example RTU for Scenario 1...",
+        name: "2A Cleaning",
+        description: "This policy applies when df.info() indicates that the relevant column is of object type, and df.head() reveals non-numeric characters in the first five rows.",
+        goldenExampleThought: "To find <Query's Requirement(s)>, I'll use the  <column name> columns. I need to calculate the sum of the  `<column name>` column for each  `<column name>`. First, I'll have to convert the  `<column name>` column to a numeric data type, as the output of df.info() indicates that it is currently of object type. From the output of df.head(), it is clear that  `<column name>` can be cleaned by removing the commas and the '€' sign, and then converting the column to a numeric format. Next, I'll calculate  <Query's Requirement(s)>. Finally, I'll identify  <Query's Requirement(s)>.",
+        goldenExampleRTU: "To find that, I'll clean and convert the `<column name>` column to numeric, use it as the budget and identify the most expensive Cost Code within the budget.",
         goldenExampleCode: "console.log('This is the golden example code for Scenario 1...')",
       },
       {
-        name: "Scenario 2",
-        description: "This is the description for Scenario 2...",
-        goldenExampleThought: "This is the golden example thought for Scenario 2...",
-        goldenExampleRTU: "This is the golden example RTU for Scenario 2...",
+        name: "3A Cleaning",
+        description: "The relevant columns need to be converted to numeric based on df.info(), as they are of object type. However, df.head() does not show any visible non-numeric characters in those columns.",
+        goldenExampleThought: "In order to <Query's Requirement(s)>, I'll make use of the `<relevant-column-names>` columns. From the output of `df.info()`, it can be seen that the `<column-name(s)>` column is of object type. From the output of `df.head()`, the `<column-name(s)>` column does not have any non-numeric characters, so I'll sample and print 20 non-numeric values to understand how to clean and convert it/them to numeric.",
+        goldenExampleRTU: "I'll start by looking into the `GMV` column to prepare it for analysis.",
         goldenExampleCode: "console.log('This is the golden example code for Scenario 2...')",
-      },
-    ],
-  },
-  {
-    name: "Standard Datasets",
-    subtopics: [
-      {
-        name: "Scenario A",
-        description: "This is the description for Scenario A...",
-        goldenExampleThought: "This is the golden example thought for Scenario A...",
-        goldenExampleRTU: "This is the golden example RTU for Scenario A...",
-        goldenExampleCode: "console.log('This is the golden example code for Scenario A...')",
       },
     ],
   },
@@ -94,12 +82,12 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-100">
       <Head>
-        <title>Markdown Content Viewer</title>
+        <title>Policy Viewer</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-4">Markdown Content Viewer</h1>
+        <h1 className="text-3xl font-bold mb-4">Policy Viewer</h1>
         <button
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
           onClick={() => setShowRaw(!showRaw)}
