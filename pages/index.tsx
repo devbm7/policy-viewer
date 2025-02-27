@@ -195,9 +195,9 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {/* Sidebar */}
+      {/* Fixed Sidebar */}
       <div
-        className={`bg-gray-800 text-white ${sidebarOpen ? "w-64" : "w-16"} transition-all duration-300 ease-in-out`}
+        className={`bg-gray-800 text-white ${sidebarOpen ? "w-64" : "w-16"} transition-all duration-300 ease-in-out fixed h-screen overflow-y-auto`}
       >
         <div className="p-4">
           <button
@@ -218,7 +218,7 @@ export default function Home() {
                 {showRaw ? "Show Compiled" : "Show Raw"}
               </button>
             </div>
-            <nav>
+            <nav className="pb-16">
               {exampleTopics.map((topic, topicIndex) => (
                 <div key={topicIndex} className="mb-4">
                   <h2 className="text-lg font-semibold px-4 py-2">{topic.name}</h2>
@@ -238,7 +238,7 @@ export default function Home() {
         )}
       </div>
 
-      {/* Main content */}
+      {/* Main content with adjusted margin */}
       <main className={`flex-grow p-8 ${sidebarOpen ? "ml-64" : "ml-16"} transition-all duration-300 ease-in-out`}>
         <h1 className="text-3xl font-bold mb-8">Policy Viewer</h1>
 
