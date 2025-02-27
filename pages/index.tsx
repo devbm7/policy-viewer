@@ -32,7 +32,7 @@ const exampleTopics: Topic[] = [
       {
         name: "Scenario 1",
         description: 'This is the description for Scenario 1...',
-        goldenExampleThought: "When analyzing this `dataset`, I need to:\n1. Check for null values first\n2. Apply the transformation function:\n```python\ndef transform(data):\n    return [x * 2 if x > 0 else 0 for x in data]\n```\n3. Then validate the output matches expectations",
+        goldenExampleThought: "When analyzing this dataset, I need to:\n1. Check for null values first\n2. Apply the transformation function:\n```python\ndef transform(data):\n    return [x * 2 if x > 0 else 0 for x in data]\n```\n3. Then validate the output matches expectations",
         goldenExampleRTU: "This is the golden example RTU for Scenario 1...",
         goldenExampleCode: `def example_function():
     print("This is the golden example code for Scenario 1...")
@@ -81,7 +81,11 @@ print(f"Result: {result}")
 
 // Custom components for ReactMarkdown to handle nested code blocks correctly
 const components = {
-  code({node, inline, className, children, ...props}) {
+  code: ({ inline, className, children, ...props }: {
+    inline?: boolean;
+    className?: string;
+    children: React.ReactNode;
+  }) => {
     const match = /language-(\w+)/.exec(className || '')
     return !inline && match ? (
       <SyntaxHighlighter
