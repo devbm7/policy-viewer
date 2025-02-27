@@ -54,6 +54,18 @@ const exampleTopics: Topic[] = [
       },
     ],
   },
+  {
+    name: "Categorical Sampling",
+    subtopics: [
+      {
+        name:"Categorical Sampling",
+        description: "Categorical sampling is necessary when at least one relevant column is of the object data type, is categorical in nature, and is required to answer the query.",
+        goldenExampleThought:"In order to <Query's Requirement(s)>, I'll first inspect the values in the `<column name(s)>` column. This will help me unify any identical entries that may be represented inconsistently.",
+        goldenExampleRTU: "I'll start by looking into the payment methods used by your clients.",
+        goldenExampleCode: "print('Hi')"
+      },
+    ],
+  },
 ]
 
 export default function Home() {
