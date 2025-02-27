@@ -40,6 +40,13 @@ const exampleTopics: Topic[] = [
         goldenExampleRTU: "I'll start by looking into the `GMV` column to prepare it for analysis.",
         goldenExampleCode: "console.log('This is the golden example code for Scenario 2...')",
       },
+      {
+        name: "3A conversion following failed 2A",
+        description: "Scenario 2A was required, as per df.info() and df.head(), but the model runs into a ValueError during numerical conversion. The model then needs to do 3A sampling and conversion.",
+        goldenExampleThought: "A ValueError occurred during conversion of the column `COLUMNAME`, because some unknown non-numeric characters were not removed. Therefore, I'll sample and print 20 non-numeric values from the column `COLUMNAME` to understand how to clean it completely.",
+        goldenExampleRTU: "The `COLUMNAME` column appears to contain non-numeric characters. I'll sample 20 non-numeric values in this column to understand how to clean it completely.",
+        goldenExampleCode: "console.log('This is the golden example code for Scenario 2...')",
+      },
     ],
   },
   {
@@ -50,7 +57,7 @@ const exampleTopics: Topic[] = [
         description: "Categorical sampling is necessary when at least one relevant column is of the object data type, is categorical in nature, and is required to answer the query.",
         goldenExampleThought:"In order to <Query's Requirement(s)>, I'll first inspect the values in the `<column name(s)>` column. This will help me unify any identical entries that may be represented inconsistently.",
         goldenExampleRTU: "I'll start by looking into the payment methods used by your clients.",
-        goldenExampleCode: "print('Hi')"
+        goldenExampleCode: "print('Hi')\nprint(10)"
       },
     ],
   },
