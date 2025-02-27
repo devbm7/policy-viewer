@@ -1,11 +1,11 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
 import Head from "next/head"
 import ReactMarkdown from "react-markdown"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
 import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism"
-import { Copy, Check, ChevronRight, ChevronLeft } from "lucide-react"
+import { Copy, Check, ChevronRight, ChevronLeft, Sun, Moon } from "lucide-react"
 
 type Section = {
   title: string
@@ -143,6 +143,34 @@ export default function Home() {
   const [showRaw, setShowRaw] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [activeSection, setActiveSection] = useState<string | null>(null)
+  const [darkMode, setDarkMode] = useState(false)
+
+  // Initialize dark mode from localStorage or system preference
+  useEffect(() => {
+    // Check for saved preference
+    const savedMode = localStorage.getItem('darkMode')
+    if (savedMode !== null) {
+      setDarkMode(savedMode === 'true')
+    } else {
+      // Check system preference
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+      setDarkMode(prefersDark)
+    }
+  }, [])
+
+  // Update localStorage and apply dark mode class when darkMode changes
+  useEffect(() => {
+    localStorage.setItem('darkMode', String(darkMode))
+    if (darkMode) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  }, [darkMode])
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode)
+  }
 
   const copyToClipboard = useCallback((text: string, sectionId: string) => {
     navigator.clipboard.writeText(text)
@@ -177,11 +205,11 @@ export default function Home() {
       <div className="mb-4" id={sectionId}>
         <h3 className="text-xl font-semibold mb-2 flex items-center justify-between">
           {title}
-          <button className="text-gray-500 hover:text-gray-700" onClick={() => copyToClipboard(content, sectionId)}>
+          <button className="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100" onClick={() => copyToClipboard(content, sectionId)}>
             {activeSection === sectionId ? <Check size={20} /> : <Copy size={20} />}
           </button>
         </h3>
-        <div className="bg-white p-4 rounded shadow overflow-auto">
+        <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} p-4 rounded shadow overflow-auto`}>
           {renderContent(content, isCode)}
         </div>
       </div>
@@ -189,23 +217,38 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
+    <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'} flex`}>
       <Head>
         <title>Policy Viewer</title>
         <link rel="icon" href="/favicon.ico" />
+        <style jsx global>{`
+          html.dark body {
+            background-color: #111827;
+            color: white;
+          }
+        `}</style>
       </Head>
 
       {/* Fixed Sidebar */}
       <div
-        className={`bg-gray-800 text-white ${sidebarOpen ? "w-64" : "w-16"} transition-all duration-300 ease-in-out fixed h-screen overflow-y-auto`}
+        className={`${darkMode ? 'bg-gray-900 border-r border-gray-700' : 'bg-gray-800'} text-white ${sidebarOpen ? "w-64" : "w-16"} transition-all duration-300 ease-in-out fixed h-screen overflow-y-auto`}
       >
-        <div className="p-4">
+        <div className="p-4 flex justify-between items-center">
           <button
-            className="w-full text-left flex items-center justify-between"
+            className="text-left flex items-center"
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
-            {sidebarOpen && <span>Topics</span>}
             {sidebarOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
+          </button>
+          
+          {sidebarOpen && <span>Topics</span>}
+          
+          <button 
+            onClick={toggleDarkMode}
+            className="p-2 rounded-full hover:bg-gray-700"
+            aria-label="Toggle dark mode"
+          >
+            {darkMode ? <Sun size={20} /> : <Moon size={20} />}
           </button>
         </div>
         {sidebarOpen && (
@@ -246,7 +289,7 @@ export default function Home() {
           <div key={topicIndex} className="mb-8">
             <h2 className="text-2xl font-bold mb-4">{topic.name}</h2>
             {topic.subtopics.map((subtopic, subtopicIndex) => (
-              <div key={subtopicIndex} className="mb-6 bg-gray-200 p-4 rounded">
+              <div key={subtopicIndex} className={`mb-6 ${darkMode ? 'bg-gray-800' : 'bg-gray-200'} p-4 rounded`}>
                 <h3 className="text-xl font-semibold mb-4">{subtopic.name}</h3>
                 {renderSection("Description", subtopic.description, topicIndex, subtopicIndex)}
                 {renderSection("Golden Example Thought", subtopic.goldenExampleThought, topicIndex, subtopicIndex)}
