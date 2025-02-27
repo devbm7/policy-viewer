@@ -1,8 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import Head from "next/head"
 import ReactMarkdown from "react-markdown"
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
+import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism"
+import { Copy, Check, ChevronRight, ChevronLeft } from "lucide-react"
 
 type Section = {
   title: string
@@ -24,40 +27,54 @@ type Topic = {
 
 const exampleTopics: Topic[] = [
   {
-    name: "Conversions",
+    name: "Non Standard Datasets",
     subtopics: [
       {
-        name: "2A Cleaning",
-        description: "This policy applies when df.info() indicates that the relevant column is of object type, and df.head() reveals non-numeric characters in the first five rows.",
-        goldenExampleThought: "To find <Query's Requirement(s)>, I'll use the  <column name> columns. I need to calculate the sum of the  `<column name>` column for each  `<column name>`. First, I'll have to convert the  `<column name>` column to a numeric data type, as the output of df.info() indicates that it is currently of object type. From the output of df.head(), it is clear that  `<column name>` can be cleaned by removing the commas and the '€' sign, and then converting the column to a numeric format. Next, I'll calculate  <Query's Requirement(s)>. Finally, I'll identify  <Query's Requirement(s)>.",
-        goldenExampleRTU: "To find that, I'll clean and convert the `<column name>` column to numeric, use it as the budget and identify the most expensive Cost Code within the budget.",
-        goldenExampleCode: "console.log('This is the golden example code for Scenario 1...')",
+        name: "Scenario 1",
+        description: "This is the description for Scenario 1...",
+        goldenExampleThought: "This is the golden example thought for Scenario 1...",
+        goldenExampleRTU: "This is the golden example RTU for Scenario 1...",
+        goldenExampleCode: `
+def example_function():
+    print("This is the golden example code for Scenario 1...")
+    for i in range(5):
+        print(f"Iteration {i}")
+        `,
       },
       {
-        name: "3A Cleaning",
-        description: "The relevant columns need to be converted to numeric based on df.info(), as they are of object type. However, df.head() does not show any visible non-numeric characters in those columns.",
-        goldenExampleThought: "In order to <Query's Requirement(s)>, I'll make use of the `<relevant-column-names>` columns. From the output of `df.info()`, it can be seen that the `<column-name(s)>` column is of object type. From the output of `df.head()`, the `<column-name(s)>` column does not have any non-numeric characters, so I'll sample and print 20 non-numeric values to understand how to clean and convert it/them to numeric.",
-        goldenExampleRTU: "I'll start by looking into the `GMV` column to prepare it for analysis.",
-        goldenExampleCode: "console.log('This is the golden example code for Scenario 2...')",
-      },
-      {
-        name: "3A conversion following failed 2A",
-        description: "Scenario 2A was required, as per df.info() and df.head(), but the model runs into a ValueError during numerical conversion. The model then needs to do 3A sampling and conversion.",
-        goldenExampleThought: "A ValueError occurred during conversion of the column `COLUMNAME`, because some unknown non-numeric characters were not removed. Therefore, I'll sample and print 20 non-numeric values from the column `COLUMNAME` to understand how to clean it completely.",
-        goldenExampleRTU: "The `COLUMNAME` column appears to contain non-numeric characters. I'll sample 20 non-numeric values in this column to understand how to clean it completely.",
-        goldenExampleCode: "console.log('This is the golden example code for Scenario 2...')",
+        name: "Scenario 2",
+        description: "This is the description for Scenario 2...",
+        goldenExampleThought: "This is the golden example thought for Scenario 2...",
+        goldenExampleRTU: "This is the golden example RTU for Scenario 2...",
+        goldenExampleCode: `
+class ExampleClass:
+    def __init__(self):
+        self.message = "This is the golden example code for Scenario 2..."
+    
+    def print_message(self):
+        print(self.message)
+        `,
       },
     ],
   },
   {
-    name: "Categorical Sampling",
+    name: "Standard Datasets",
     subtopics: [
       {
-        name:"Categorical Sampling",
-        description: "Categorical sampling is necessary when at least one relevant column is of the object data type, is categorical in nature, and is required to answer the query.",
-        goldenExampleThought:"In order to <Query's Requirement(s)>, I'll first inspect the values in the `<column name(s)>` column. This will help me unify any identical entries that may be represented inconsistently.",
-        goldenExampleRTU: "I'll start by looking into the payment methods used by your clients.",
-        goldenExampleCode: "print('Hi')\nprint(10)"
+        name: "Scenario A",
+        description: "This is the description for Scenario A...",
+        goldenExampleThought: "This is the golden example thought for Scenario A...",
+        goldenExampleRTU: "This is the golden example RTU for Scenario A...",
+        goldenExampleCode: `import numpy as np
+
+def process_data(data):
+    return np.mean(data)
+
+print("This is the golden example code for Scenario A...")
+data = [1, 2, 3, 4, 5]
+result = process_data(data)
+print(f"Result: {result}")
+        `,
       },
     ],
   },
@@ -65,42 +82,93 @@ const exampleTopics: Topic[] = [
 
 export default function Home() {
   const [showRaw, setShowRaw] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [activeSection, setActiveSection] = useState<string | null>(null)
 
-  const copyToClipboard = (text: string) => {
+  const copyToClipboard = useCallback((text: string, sectionId: string) => {
     navigator.clipboard.writeText(text)
-    alert("Content copied to clipboard!")
+    setActiveSection(sectionId)
+    setTimeout(() => setActiveSection(null), 2000)
+  }, [])
+
+  const renderSection = (title: string, content: string, topicIndex: number, subtopicIndex: number) => {
+    const sectionId = `${topicIndex}-${subtopicIndex}-${title.replace(/\s+/g, "-").toLowerCase()}`
+    return (
+      <div className="mb-4" id={sectionId}>
+        <h3 className="text-xl font-semibold mb-2 flex items-center justify-between">
+          {title}
+          <button className="text-gray-500 hover:text-gray-700" onClick={() => copyToClipboard(content, sectionId)}>
+            {activeSection === sectionId ? <Check size={20} /> : <Copy size={20} />}
+          </button>
+        </h3>
+        <div className="bg-white p-4 rounded shadow">
+          {title === "Golden Example Code" ? (
+            <SyntaxHighlighter language="python" style={vscDarkPlus} showLineNumbers>
+              {content}
+            </SyntaxHighlighter>
+          ) : showRaw ? (
+            <pre className="whitespace-pre-wrap">{content}</pre>
+          ) : (
+            <ReactMarkdown>{content}</ReactMarkdown>
+          )}
+        </div>
+      </div>
+    )
   }
 
-  const renderSection = (title: string, content: string) => (
-    <div className="mb-4">
-      <h3 className="text-xl font-semibold mb-2">{title}</h3>
-      <div className="bg-white p-4 rounded shadow">
-        {showRaw ? <pre className="whitespace-pre-wrap">{content}</pre> : <ReactMarkdown>{content}</ReactMarkdown>}
-      </div>
-      <button
-        className="mt-2 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded text-sm"
-        onClick={() => copyToClipboard(content)}
-      >
-        Copy {title}
-      </button>
-    </div>
-  )
-
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 flex">
       <Head>
-        <title>Policy Viewer</title>
+        <title>Markdown Content Viewer</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-4">Policy Viewer</h1>
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
-          onClick={() => setShowRaw(!showRaw)}
-        >
-          {showRaw ? "Show Compiled" : "Show Raw"}
-        </button>
+      {/* Sidebar */}
+      <div
+        className={`bg-gray-800 text-white ${sidebarOpen ? "w-64" : "w-16"} transition-all duration-300 ease-in-out`}
+      >
+        <div className="p-4">
+          <button
+            className="w-full text-left flex items-center justify-between"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+          >
+            {sidebarOpen && <span>Topics</span>}
+            {sidebarOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
+          </button>
+        </div>
+        {sidebarOpen && (
+          <>
+            <div className="p-4">
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full"
+                onClick={() => setShowRaw(!showRaw)}
+              >
+                {showRaw ? "Show Compiled" : "Show Raw"}
+              </button>
+            </div>
+            <nav>
+              {exampleTopics.map((topic, topicIndex) => (
+                <div key={topicIndex} className="mb-4">
+                  <h2 className="text-lg font-semibold px-4 py-2">{topic.name}</h2>
+                  <ul>
+                    {topic.subtopics.map((subtopic, subtopicIndex) => (
+                      <li key={subtopicIndex} className="px-4 py-1">
+                        <a href={`#${topicIndex}-${subtopicIndex}-description`} className="hover:text-gray-300">
+                          {subtopic.name}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </nav>
+          </>
+        )}
+      </div>
+
+      {/* Main content */}
+      <main className={`flex-grow p-8 ${sidebarOpen ? "ml-64" : "ml-16"} transition-all duration-300 ease-in-out`}>
+        <h1 className="text-3xl font-bold mb-8">Markdown Content Viewer</h1>
 
         {exampleTopics.map((topic, topicIndex) => (
           <div key={topicIndex} className="mb-8">
@@ -108,10 +176,10 @@ export default function Home() {
             {topic.subtopics.map((subtopic, subtopicIndex) => (
               <div key={subtopicIndex} className="mb-6 bg-gray-200 p-4 rounded">
                 <h3 className="text-xl font-semibold mb-4">{subtopic.name}</h3>
-                {renderSection("Description", subtopic.description)}
-                {renderSection("Golden Example Thought", subtopic.goldenExampleThought)}
-                {renderSection("Golden Example RTU", subtopic.goldenExampleRTU)}
-                {renderSection("Golden Example Code", subtopic.goldenExampleCode)}
+                {renderSection("Description", subtopic.description, topicIndex, subtopicIndex)}
+                {renderSection("Golden Example Thought", subtopic.goldenExampleThought, topicIndex, subtopicIndex)}
+                {renderSection("Golden Example RTU", subtopic.goldenExampleRTU, topicIndex, subtopicIndex)}
+                {renderSection("Golden Example Code", subtopic.goldenExampleCode, topicIndex, subtopicIndex)}
               </div>
             ))}
           </div>
