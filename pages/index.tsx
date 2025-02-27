@@ -32,7 +32,7 @@ const exampleTopics: Topic[] = [
       {
         name: "Scenario 1",
         description: 'This is the description for Scenario 1...',
-        goldenExampleThought: "This is the golden example thought for Scenario 1...",
+        goldenExampleThought: "When analyzing this `dataset`, I need to:\n1. Check for null values first\n2. Apply the transformation function:\n```python\ndef transform(data):\n    return [x * 2 if x > 0 else 0 for x in data]\n```\n3. Then validate the output matches expectations",
         goldenExampleRTU: "This is the golden example RTU for Scenario 1...",
         goldenExampleCode: `def example_function():
     print("This is the golden example code for Scenario 1...")
@@ -43,7 +43,7 @@ const exampleTopics: Topic[] = [
       {
         name: "Scenario 2",
         description: "This is the description for Scenario 2...",
-        goldenExampleThought: "This is the golden example thought for Scenario 2...",
+        goldenExampleThought: "To debug this issue:\n- Verify inputs are in expected format\n- Add logging at key points:\n```javascript\nfunction processData(data) {\n  console.log(\"Input received:\", data);\n  const result = heavyCalculation(data);\n  console.log(\"Processing complete:\", result);\n  return result;\n}\n```\n- Check for edge cases, especially empty arrays",
         goldenExampleRTU: "This is the golden example RTU for Scenario 2...",
         goldenExampleCode: `
 class ExampleClass:
@@ -62,7 +62,7 @@ class ExampleClass:
       {
         name: "Scenario A",
         description: "This is the description for Scenario A...",
-        goldenExampleThought: "This is the golden example thought for Scenario A...",
+        goldenExampleThought: "Comparing these sorting algorithms:\n* QuickSort offers O(n log n) average performance\n```javascript\nfunction quickSort(arr) {\n  if (arr.length <= 1) return arr;\n  const pivot = arr[0];\n  const left = [], right = [];\n  // Implementation details...\n}\n```\n* MergeSort guarantees O(n log n) but requires extra space",
         goldenExampleRTU: "This is the golden example RTU for Scenario A...",
         goldenExampleCode: `import numpy as np
 
@@ -79,6 +79,27 @@ print(f"Result: {result}")
   },
 ]
 
+// Custom components for ReactMarkdown to handle nested code blocks correctly
+const components = {
+  code({node, inline, className, children, ...props}) {
+    const match = /language-(\w+)/.exec(className || '')
+    return !inline && match ? (
+      <SyntaxHighlighter
+        language={match[1]}
+        style={vscDarkPlus}
+        PreTag="div"
+        {...props}
+      >
+        {String(children).replace(/\n$/, '')}
+      </SyntaxHighlighter>
+    ) : (
+      <code className={className} {...props}>
+        {children}
+      </code>
+    )
+  }
+}
+
 export default function Home() {
   const [showRaw, setShowRaw] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(true)
@@ -90,8 +111,29 @@ export default function Home() {
     setTimeout(() => setActiveSection(null), 2000)
   }, [])
 
+  // This function ensures correct display of multi-line content with nested code blocks
+  const renderContent = (content: string, isCode: boolean) => {
+    if (isCode) {
+      return (
+        <SyntaxHighlighter language="python" style={vscDarkPlus} showLineNumbers>
+          {content}
+        </SyntaxHighlighter>
+      )
+    } else if (showRaw) {
+      return <pre className="whitespace-pre-wrap">{content}</pre>
+    } else {
+      return (
+        <ReactMarkdown components={components}>
+          {content}
+        </ReactMarkdown>
+      )
+    }
+  }
+
   const renderSection = (title: string, content: string, topicIndex: number, subtopicIndex: number) => {
     const sectionId = `${topicIndex}-${subtopicIndex}-${title.replace(/\s+/g, "-").toLowerCase()}`
+    const isCode = title === "Golden Example Code"
+    
     return (
       <div className="mb-4" id={sectionId}>
         <h3 className="text-xl font-semibold mb-2 flex items-center justify-between">
@@ -100,16 +142,8 @@ export default function Home() {
             {activeSection === sectionId ? <Check size={20} /> : <Copy size={20} />}
           </button>
         </h3>
-        <div className="bg-white p-4 rounded shadow">
-          {title === "Golden Example Code" ? (
-            <SyntaxHighlighter language="python" style={vscDarkPlus} showLineNumbers>
-              {content}
-            </SyntaxHighlighter>
-          ) : showRaw ? (
-            <pre className="whitespace-pre-wrap">{content}</pre>
-          ) : (
-            <ReactMarkdown>{content}</ReactMarkdown>
-          )}
+        <div className="bg-white p-4 rounded shadow overflow-auto">
+          {renderContent(content, isCode)}
         </div>
       </div>
     )
@@ -187,4 +221,3 @@ export default function Home() {
     </div>
   )
 }
-
