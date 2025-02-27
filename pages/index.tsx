@@ -31,11 +31,10 @@ const exampleTopics: Topic[] = [
     subtopics: [
       {
         name: "Scenario 1",
-        description: "This is the description for Scenario 1...",
+        description: 'This is the description for Scenario 1...',
         goldenExampleThought: "This is the golden example thought for Scenario 1...",
         goldenExampleRTU: "This is the golden example RTU for Scenario 1...",
-        goldenExampleCode: `
-def example_function():
+        goldenExampleCode: `def example_function():
     print("This is the golden example code for Scenario 1...")
     for i in range(5):
         print(f"Iteration {i}")
