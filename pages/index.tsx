@@ -7,6 +7,7 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
 import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism"
 import { Copy, Check, ChevronRight, ChevronLeft } from "lucide-react"
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/react"
 
 type Section = {
   title: string
@@ -194,6 +195,8 @@ export default function Home() {
       <Head>
         <title>Policy Viewer</title>
         <link rel="icon" href="/favicon.ico" />
+        <SpeedInsights />
+        <Analytics />
       </Head>
 
       {/* Sidebar */}
