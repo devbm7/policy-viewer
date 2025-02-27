@@ -6,6 +6,7 @@ import ReactMarkdown from "react-markdown"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
 import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism"
 import { Copy, Check, ChevronRight, ChevronLeft } from "lucide-react"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 type Section = {
   title: string
