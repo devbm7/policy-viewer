@@ -27,32 +27,23 @@ type Topic = {
 
 const exampleTopics: Topic[] = [
   {
-    name: "Non Standard Datasets",
+    name: "Categorical Sampling",
     subtopics: [
       {
-        name: "Scenario 1",
-        description: 'This is the description for Scenario 1...',
-        goldenExampleThought: "When analyzing this dataset, I need to:\n1. Check for null values first\n2. Apply the transformation function:\n```python\ndef transform(data):\n    return [x * 2 if x > 0 else 0 for x in data]\n```\n3. Then validate the output matches expectations",
-        goldenExampleRTU: "This is the golden example RTU for Scenario 1...",
-        goldenExampleCode: `def example_function():
-    print("This is the golden example code for Scenario 1...")
-    for i in range(5):
-        print(f"Iteration {i}")
-        `,
-      },
-      {
-        name: "Scenario 2",
-        description: "This is the description for Scenario 2...",
-        goldenExampleThought: "To debug this issue:\n- Verify inputs are in expected format\n- Add logging at key points:\n```javascript\nfunction processData(data) {\n  console.log(\"Input received:\", data);\n  const result = heavyCalculation(data);\n  console.log(\"Processing complete:\", result);\n  return result;\n}\n```\n- Check for edge cases, especially empty arrays",
-        goldenExampleRTU: "This is the golden example RTU for Scenario 2...",
-        goldenExampleCode: `
-class ExampleClass:
-    def __init__(self):
-        self.message = "This is the golden example code for Scenario 2..."
-    
-    def print_message(self):
-        print(self.message)
-        `,
+        name: "Categorical Sampling",
+        description: 'The header is missing in the dataset, but the names of the columns of interest can be deduced from the column values.',
+        goldenExampleThought: "In order to <Query's Requirement(s)>, I'll first inspect the values in the `<column name(s)>` column. This will help me unify any identical entries that may be represented inconsistently.",
+        goldenExampleRTU: "I'll start by looking into the payment methods used by your clients.",
+        goldenExampleCode: `# Get all unique values from \`Payment System Name\`
+unique_values = df['Payment System Name'].unique()
+# Check the number of unique values in \`Payment System Name\`
+if len(unique_values) > 50:
+  # If there are too many unique values, sample the top 50
+  top_occurring_values = df['Payment System Name'].value_counts().head(50).index.tolist()
+  print(top_occurring_values)
+else:
+  # Otherwise print all unique values in \`Payment System Name\`
+  print(unique_values)`,
       },
     ],
   },
@@ -156,7 +147,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-100 flex">
       <Head>
-        <title>Markdown Content Viewer</title>
+        <title>Policy Viewer</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -205,7 +196,7 @@ export default function Home() {
 
       {/* Main content */}
       <main className={`flex-grow p-8 ${sidebarOpen ? "ml-64" : "ml-16"} transition-all duration-300 ease-in-out`}>
-        <h1 className="text-3xl font-bold mb-8">Markdown Content Viewer</h1>
+        <h1 className="text-3xl font-bold mb-8">Policy Viewer</h1>
 
         {exampleTopics.map((topic, topicIndex) => (
           <div key={topicIndex} className="mb-8">
