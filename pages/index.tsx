@@ -26,13 +26,35 @@ const components = {
         {String(children).replace(/\n$/, '')}
       </SyntaxHighlighter>
     ) : (
-      // <code className={className} {...props}>
       <code 
         className={`${className || ''} ${inline ? 'bg-gray-200 dark:bg-gray-700 px-1 py-0.5 rounded text-red-500 dark:text-red-400' : ''}`} 
         {...props}
       >
         {children}
       </code>
+    )
+  },
+  // Add specific styling for ordered lists to display numbers
+  ol: ({ ordered, className, children, ...props }: {
+    ordered?: boolean;
+    className?: string;
+    children: React.ReactNode;
+  }) => {
+    return (
+      <ol className="list-decimal pl-8 mb-4" {...props}>
+        {children}
+      </ol>
+    )
+  },
+  // Also style list items for better presentation
+  li: ({ className, children, ...props }: {
+    className?: string;
+    children: React.ReactNode;
+  }) => {
+    return (
+      <li className="mb-1" {...props}>
+        {children}
+      </li>
     )
   }
 }
@@ -180,9 +202,11 @@ export default function Home() {
       return <pre className="whitespace-pre-wrap">{content}</pre>
     } else {
       return (
-        <ReactMarkdown components={components}>
-          {content}
-        </ReactMarkdown>
+        <div className="markdown-content">
+          <ReactMarkdown components={components}>
+            {content}
+          </ReactMarkdown>
+        </div>
       )
     }
   }

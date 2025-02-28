@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.markdown-content ol {
+    list-style-type: decimal;
+    padding-left: 2rem;
+    margin-bottom: 1rem;
+}
+  
+.markdown-content ol li {
+    margin-bottom: 0.25rem;
+}
+  
+.dark .markdown-content ol {
+    color: white;
+}
+  
+.light .markdown-content ol {
+    color: black;
+}

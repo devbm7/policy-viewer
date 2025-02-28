@@ -204,7 +204,8 @@ print(filtered_df[['pokemon' , 'pokemon_hp']])`
         {
           name: "6L",
           description: "Sorting by List on User Request ErrorUser requests that the plot be sorted through an ordered list of levels.\nQuery Example: \"Make a bar plot of total sales across US, Canada, and Mexico. Sort in the following order: Mexico, Canada, US.\"",
-          goldenExampleThought:`As requested, I'll create a bar chart to visualize the median calories burned for Yoga, HIIT, Cardio, and Strength, with the bars arranged in that order.Visualize the data:
+          goldenExampleThought:`As requested, I'll create a bar chart to visualize the median calories burned for Yoga, HIIT, Cardio, and Strength, with the bars arranged in that order.
+Visualize the data:
 1. Create a list \`order\` with elements 'Yoga', 'HIIT', 'Cardio', and 'Strength'.
 2. Create a bar chart using the \`Workout_Type\` column on the x-axis and the \`Calories_Burned\` column on the y-axis.
 3. Set x-axis title as 'Workout Type' and y-axis title as 'Median Calories Burned'.
