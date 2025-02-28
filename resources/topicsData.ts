@@ -30,12 +30,12 @@ export type Section = {
 unique_values = df['Payment System Name'].unique()
 # Check the number of unique values in \`Payment System Name\`
 if len(unique_values) > 50:
-  # If there are too many unique values, sample the top 50
-  top_occurring_values = df['Payment System Name'].value_counts().head(50).index.tolist()
-  print(top_occurring_values)
+    # If there are too many unique values, sample the top 50
+    top_occurring_values = df['Payment System Name'].value_counts().head(50).index.tolist()
+    print(top_occurring_values)
 else:
-  # Otherwise print all unique values in \`Payment System Name\`
-  print(unique_values)`,
+    # Otherwise print all unique values in \`Payment System Name\`
+    print(unique_values)`,
         },
       ],
     },
@@ -70,12 +70,12 @@ else:
 non_numeric_gmv_value = df[pd.to_numeric(df['GMV'], errors='coerce').isna()]['GMV'].unique()
     
 if (len(non_numeric_gmv_value  ) > 20):
-  # Sample 20 of them if there are too many unique values
-  print(f"Non Numeric values in GMV {np.random.choice(non_numeric_gmv_value  , 20, replace=False)}")
+    # Sample 20 of them if there are too many unique values
+    print(f"Non Numeric values in GMV {np.random.choice(non_numeric_gmv_value  , 20, replace=False)}")
     
 else:
-  # Otherwise print all unique non-numeric values from \`GMV\`
-  print(f"Non Numeric values in GMV {non_numeric_gmv_value}")`,
+    # Otherwise print all unique non-numeric values from \`GMV\`
+    print(f"Non Numeric values in GMV {non_numeric_gmv_value}")`,
           },
           {
             name: "3A Conversion following failed 2A",
@@ -87,11 +87,11 @@ else:
 # Get all unique non-numeric values from \`net_worth\` column
 non_numeric_net_worth_value = df[pd.to_numeric(df['net_worth'], errors='coerce').isna()]['net_worth'].unique()
 if (len(non_numeric_net_worth_value) > 20):
-  # Sample 20 of them if there are too many unique values
-  print(np.random.choice(non_numeric_net_worth_value, 20, replace=False))
+    # Sample 20 of them if there are too many unique values
+    print(np.random.choice(non_numeric_net_worth_value, 20, replace=False))
 else:
-  # Otherwise print all unique non-numeric values from \`net_worth\`
-  print(non_numeric_net_worth_value)`,
+    # Otherwise print all unique non-numeric values from \`net_worth\`
+    print(non_numeric_net_worth_value)`,
           },
           {
             name: "Datetime Conversion",
@@ -149,7 +149,6 @@ models = {
     'Logistic Regression': LogisticRegression(),
     'Random Forest': RandomForestClassifier(),
     'XGBoost': XGBClassifier(),
-
 }
 
 results = {}
@@ -212,15 +211,15 @@ print(filtered_df[['pokemon' , 'pokemon_hp']])`
 order = ['Yoga', 'HIIT', 'Cardio', 'Strength']
 # Create a bar chart using the \`Workout_Type\` column on the x-axis and the \`Calories_Burned\` column on the y-axis.
 chart = alt.Chart(median_calories_burned).mark_bar().encode(
-  # Set x-axis title as 'Workout Type' and y-axis title as 'Median Calories Burned'.
-  x=alt.X('Workout_Type', sort=order, title='Workout Type'),
-  # Use the \`order\` list to control the order of the bars.
-  y=alt.Y('Calories_Burned', title='Median Calories Burned'),
-  # Add tooltips for columns \`Workout_Type\` and \`Calories_Burned\`.
-  tooltip = ['Workout_Type', 'Calories_Burned']
+    # Set x-axis title as 'Workout Type' and y-axis title as 'Median Calories Burned'.
+    x=alt.X('Workout_Type', sort=order, title='Workout Type'),
+    # Use the \`order\` list to control the order of the bars.
+    y=alt.Y('Calories_Burned', title='Median Calories Burned'),
+    # Add tooltips for columns \`Workout_Type\` and \`Calories_Burned\`.
+    tooltip = ['Workout_Type', 'Calories_Burned']
 ).properties(
-  # Set the title of the plot to 'Median Calories Burned by Workout Type'.
-  title='Median Calories Burned by Workout Type'
+    # Set the title of the plot to 'Median Calories Burned by Workout Type'.
+    title='Median Calories Burned by Workout Type'
 ).interactive() # Make the plot interactive enabling zooming and panning.
 # Save the chart to a JSON file
 chart.save('median_calories_burned_by_workout_type_bar_chart.json')`
