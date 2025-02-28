@@ -26,7 +26,11 @@ const components = {
         {String(children).replace(/\n$/, '')}
       </SyntaxHighlighter>
     ) : (
-      <code className={className} {...props}>
+      // <code className={className} {...props}>
+      <code 
+        className={`${className || ''} ${inline ? 'bg-gray-200 dark:bg-gray-700 px-1 py-0.5 rounded text-red-500 dark:text-red-400' : ''}`} 
+        {...props}
+      >
         {children}
       </code>
     )
