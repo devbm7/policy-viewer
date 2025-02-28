@@ -105,4 +105,98 @@ export type Section = {
           },
     ],
     },
+    {
+        name: "ModuleNotFound",
+        subtopics: [
+            {
+                name: "ModuleNotFound",
+                description: "A ModuleNotFoundError occurs in the response when the model attempts to use a Python module that is not installed in its environment. NOTE: Here, golden example code is part of RTU.",
+                goldenExampleThought: "It appears that I do not have access to the module, 'xgboost'. Therefore, I'll provide the code to prepare the data, train a logistic regressor, Random Forest classifier and XGBoost classifier on the training data and finally evaluate and compare their performance on the test data.",
+                goldenExampleRTU: "I cannot address this query with the libraries currently available to me. However, you can find the code below and run it in your local environment.",
+                goldenExampleCode:`from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import OneHotEncoder, StandardScaler,LabelEncoder
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from xgboost import XGBClassifier
+from sklearn.metrics import accuracy_score
+
+# Separate features and target variable
+X = df.drop('Stage', axis=1)
+y = df['Stage']
+
+# Identify categorical and numerical columns
+categorical_cols = X.select_dtypes(include=['object']).columns
+numerical_cols = X.select_dtypes(include=['int64', 'float64']).columns
+
+# One-hot encode categorical columns
+encoder = OneHotEncoder(drop='first', sparse_output=False)
+X_encoded = encoder.fit_transform(X[categorical_cols])
+encoded_df = pd.DataFrame(X_encoded, columns=encoder.get_feature_names_out(categorical_cols))
+
+# Standardize numerical columns
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X[numerical_cols])
+scaled_df = pd.DataFrame(X_scaled, columns=numerical_cols)
+
+# Combine encoded categorical columns and scaled numerical columns
+X_processed = pd.concat([encoded_df, scaled_df], axis=1)
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X_processed, y, test_size=0.2, random_state=42)
+
+# Create and train models
+models = {
+    'Logistic Regression': LogisticRegression(),
+    'Random Forest': RandomForestClassifier(),
+    'XGBoost': XGBClassifier(),
+
+}
+
+results = {}
+for name, model in models.items():
+    # Adjust labels for XGBoost
+    if name == 'XGBoost':
+        # Encode labels to start from 0 as expected by XGBoost
+        encoder = LabelEncoder()
+        y_train_encoded = encoder.fit_transform(y_train)
+        y_test_encoded = encoder.transform(y_test)
+
+        # Fit the model using encoded labels
+        model.fit(X_train, y_train_encoded)
+        y_pred = model.predict(X_test)
+        # Decode predictions to original labels for accuracy calculation
+        y_pred_original = encoder.inverse_transform(y_pred)
+        accuracy = accuracy_score(y_test, y_pred_original)
+    else:
+        # Fit the model using original labels
+        model.fit(X_train, y_train)
+        y_pred = model.predict(X_test)
+        accuracy = accuracy_score(y_test, y_pred)
+
+    results[name] = accuracy
+    print(f'{name} Accuracy: {accuracy:.4f}')
+
+# Identify the best performing model
+best_model = max(results, key=lambda name: results[name])
+print(f'Best Performing Model: {best_model}')`
+            },
+        ],
+    },
+    {
+        name: "Tie-breaking issue",
+        subtopics:[
+            {
+                name: "Does not select multiple equally good responses when it should",
+                description: "[Query - Example] Which pokemon has the highest HP? [Thought] Note: --> We don't have an exact policy for this yet. Basically thought must go for find the maximum value, filter the dataset with the rows with that maximum value to find every rows with maximum value without missing any row.",
+                goldenExampleThought: "To identify the pokemon(s) with the highest HP, I'll analyze the `pokemon_hp` column to find the pokemons with the highest HP. First, I'll find the maximum HP in this dataset, then I'll filter all pokemons with maximum HP.",
+                goldenExampleRTU: "I'll look into the pokemons to find with highest HP pokemon.",
+                goldenExampleCode: `# Find the maximum HP in the \`pokemon_hp\` column
+maximum_hp = df['pokemon_hp'].max()
+# Filter the pokemons with maximum HP
+filtered_df = df[df['pokemon_hp'] == maximum_hp]
+# Print the pokemons with maximum HP
+print(filtered_df[['pokemon' , 'pokemon_hp']])`
+            },
+        ],
+    },
   ]
