@@ -48,18 +48,17 @@ else:
           goldenExampleThought: "To find <Query's Requirement(s)>, I'll use the `<column name(s)>` columns.From the output of `df.info()`, it can be seen that the `<column-name(s)>` columns is/are of object type. From the output of `df.head()`, it is clear that `<column name(s)>` can be cleaned by removing the < non-numeric characters> character(s), and then converting it/them to numeric. Next, I'll <Query's Requirement(s)>.",
           goldenExampleRTU: "I'll start by organizing the `Total` column and proceed with the analysis.",
           goldenExampleCode: `# Remove '€' and ',' from the \`Total\` column
-  df['Total'] = df['Total'].str.replace('€', '', regex=False).str.replace(',', '', regex=False)
+df['Total'] = df['Total'].str.replace('€', '', regex=False).str.replace(',', '', regex=False)
   
-  # and convert it to numeric
-  df['Total'] = pd.to_numeric(df['Total'])
+# and convert it to numeric
+df['Total'] = pd.to_numeric(df['Total'])
   
-  # Aggregate on \`Cost Code\` and sum \`Total\` column and pick top value by Budget
-  expensive_cost_code = df.groupby('Cost Code')['Total'].sum().reset_index(name='Budget').sort_values(by='Budget', ascending=False).iloc[0]
+# Aggregate on \`Cost Code\` and sum \`Total\` column and pick top value by Budget
+expensive_cost_code = df.groupby('Cost Code')['Total'].sum().reset_index(name='Budget').sort_values(by='Budget', ascending=False).iloc[0]
   
-  # Display the output
-  print(expensive_cost_code)`,
+# Display the output
+print(expensive_cost_code)`,
         },
-        // Other subtopics remain the same
         {
             name: "3A Conversion",
             description: "The relevant columns need to be converted to numeric based on df.info(), as they are of object type. However, df.head() does not show any visible non-numeric characters in those columns.",
