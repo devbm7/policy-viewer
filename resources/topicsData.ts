@@ -204,7 +204,15 @@ print(filtered_df[['pokemon' , 'pokemon_hp']])`
         {
           name: "6L",
           description: "Sorting by List on User Request ErrorUser requests that the plot be sorted through an ordered list of levels.\nQuery Example: \"Make a bar plot of total sales across US, Canada, and Mexico. Sort in the following order: Mexico, Canada, US.\"",
-          goldenExampleThought:"As requested, I'll create a bar chart to visualize the median calories burned for Yoga, HIIT, Cardio, and Strength, with the bars arranged in that order. \nVisualize the data: \n1. Create a list `order` with elements 'Yoga', 'HIIT', 'Cardio', and 'Strength'.\n2. Create a bar chart using the `Workout_Type` column on the x-axis and the `Calories_Burned` column on the y-axis.\n3. Set x-axis title as 'Workout Type' and y-axis title as 'Median Calories Burned'.\n4. Use the `order` list to control the order of the bars.\n5. Add tooltips for columns `Workout_Type` and `Calories_Burned`.\n6. Set the title of the plot to 'Median Calories Burned by Workout Type'.\n7. Make the plot interactive enabling zooming and panning.\n8. Save the plot as a JSON file.",
+          goldenExampleThought:`As requested, I'll create a bar chart to visualize the median calories burned for Yoga, HIIT, Cardio, and Strength, with the bars arranged in that order.Visualize the data:
+1. Create a list \`order\` with elements 'Yoga', 'HIIT', 'Cardio', and 'Strength'.
+2. Create a bar chart using the \`Workout_Type\` column on the x-axis and the \`Calories_Burned\` column on the y-axis.
+3. Set x-axis title as 'Workout Type' and y-axis title as 'Median Calories Burned'.
+4. Use the \`order\` list to control the order of the bars.
+5. Add tooltips for columns \`Workout_Type\` and \`Calories_Burned\`.
+6. Set the title of the plot to 'Median Calories Burned by Workout Type'.
+7. Make the plot interactive enabling zooming and panning.
+8. Save the plot as a JSON file.`,
           goldenExampleRTU: "I'll create a bar chart to visualize the median calories burned by workout type.",
           goldenExampleCode: `import altair as alt
 # Create a list \`order\` with elements 'Yoga', 'HIIT', 'Cardio', and 'Strength'.
