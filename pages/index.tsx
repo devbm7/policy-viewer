@@ -161,7 +161,7 @@ export default function Home() {
     const url = `${window.location.origin}${window.location.pathname}#${id}`
     navigator.clipboard.writeText(url)
     // Show a notification or toast here if you want
-    alert("Link copied to clipboard!")
+    // alert("Link copied to clipboard!")
   }, [])
 
   // This function ensures correct display of multi-line content with nested code blocks

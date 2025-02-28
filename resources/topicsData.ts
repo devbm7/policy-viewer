@@ -27,15 +27,15 @@ export type Section = {
           goldenExampleThought: "In order to <Query's Requirement(s)>, I'll first inspect the values in the `<column name(s)>` column. This will help me unify any identical entries that may be represented inconsistently.",
           goldenExampleRTU: "I'll start by looking into the payment methods used by your clients.",
           goldenExampleCode: `# Get all unique values from \`Payment System Name\`
-  unique_values = df['Payment System Name'].unique()
-  # Check the number of unique values in \`Payment System Name\`
-  if len(unique_values) > 50:
-    # If there are too many unique values, sample the top 50
-    top_occurring_values = df['Payment System Name'].value_counts().head(50).index.tolist()
-    print(top_occurring_values)
-  else:
-    # Otherwise print all unique values in \`Payment System Name\`
-    print(unique_values)`,
+unique_values = df['Payment System Name'].unique()
+# Check the number of unique values in \`Payment System Name\`
+if len(unique_values) > 50:
+  # If there are too many unique values, sample the top 50
+  top_occurring_values = df['Payment System Name'].value_counts().head(50).index.tolist()
+  print(top_occurring_values)
+else:
+  # Otherwise print all unique values in \`Payment System Name\`
+  print(unique_values)`,
         },
       ],
     },
@@ -66,16 +66,16 @@ export type Section = {
             goldenExampleThought: "In order to calculate the percentage of `GMV` across different brands, I'll use the `GMV` and `Type` columns.I first need to convert the `GMV` column to numeric as the output of `df.info()` shows it is currently of object type. From the output of `df.head()`, `GMV` does not apparently have any non-numeric characters and thus, I'll sample and print 20 non-numeric values in that column to understand how to clean and convert it to numeric.",
             goldenExampleRTU: "I'll start by looking into the `GMV` column to prepare it for analysis.",
             goldenExampleCode: `import numpy as np
-    # Get all unique non-numeric values from \`GMV\`
-    non_numeric_gmv_value = df[pd.to_numeric(df['GMV'], errors='coerce').isna()]['GMV'].unique()
+# Get all unique non-numeric values from \`GMV\`
+non_numeric_gmv_value = df[pd.to_numeric(df['GMV'], errors='coerce').isna()]['GMV'].unique()
     
-    if (len(non_numeric_gmv_value  ) > 20):
-      # Sample 20 of them if there are too many unique values
-       print(f"Non Numeric values in GMV {np.random.choice(non_numeric_gmv_value  , 20, replace=False)}")
+if (len(non_numeric_gmv_value  ) > 20):
+  # Sample 20 of them if there are too many unique values
+  print(f"Non Numeric values in GMV {np.random.choice(non_numeric_gmv_value  , 20, replace=False)}")
     
-    else:
-      # Otherwise print all unique non-numeric values from \`GMV\`
-      print(f"Non Numeric values in GMV {non_numeric_gmv_value}")`,
+else:
+  # Otherwise print all unique non-numeric values from \`GMV\`
+  print(f"Non Numeric values in GMV {non_numeric_gmv_value}")`,
           },
           {
             name: "3A Conversion following failed 2A",
@@ -84,14 +84,14 @@ export type Section = {
             goldenExampleRTU: "It looks like there are non-numeric values in the `net_worth` and `Roth_IRA` columns. I'll review their values before moving forward.",
             goldenExampleCode: `import numpy as np
     
-    # Get all unique non-numeric values from \`net_worth\` column
-    non_numeric_net_worth_value = df[pd.to_numeric(df['net_worth'], errors='coerce').isna()]['net_worth'].unique()
-    if (len(non_numeric_net_worth_value) > 20):
-      # Sample 20 of them if there are too many unique values
-      print(np.random.choice(non_numeric_net_worth_value, 20, replace=False))
-    else:
-      # Otherwise print all unique non-numeric values from \`net_worth\`
-      print(non_numeric_net_worth_value)`,
+# Get all unique non-numeric values from \`net_worth\` column
+non_numeric_net_worth_value = df[pd.to_numeric(df['net_worth'], errors='coerce').isna()]['net_worth'].unique()
+if (len(non_numeric_net_worth_value) > 20):
+  # Sample 20 of them if there are too many unique values
+  print(np.random.choice(non_numeric_net_worth_value, 20, replace=False))
+else:
+  # Otherwise print all unique non-numeric values from \`net_worth\`
+  print(non_numeric_net_worth_value)`,
           },
           {
             name: "Datetime Conversion",
@@ -99,9 +99,9 @@ export type Section = {
             goldenExampleThought: "In order to display a comparison of the monthly sales of different products, I'll first convert the `Date` column to a datetime format. Then I'll extract the month from the `Date` column and create a new column labeled `Month`. < Remaining-analysis>",
             goldenExampleRTU: "I'll organize the data then visualize the comparison of the monthly sales of different products. `<DEV:NOT-RECOMMENDED-TO-USE-THIS>`",
             goldenExampleCode: `# Convert \`Date\` column to datetime
-    df['Date'] = pd.to_datetime(df['Date'])
-    # Extract month from \`Date\` and save it to new column \`Month\`
-    df['Month'] = df['Date'].dt.month_name()`,
+df['Date'] = pd.to_datetime(df['Date'])
+# Extract month from \`Date\` and save it to new column \`Month\`
+df['Month'] = df['Date'].dt.month_name()`,
           },
     ],
     },
@@ -198,5 +198,33 @@ filtered_df = df[df['pokemon_hp'] == maximum_hp]
 print(filtered_df[['pokemon' , 'pokemon_hp']])`
             },
         ],
+    },
+    {
+      name: "Visualization",
+      subtopics: [
+        {
+          name: "6L",
+          description: "Sorting by List on User Request ErrorUser requests that the plot be sorted through an ordered list of levels.\nQuery Example: \"Make a bar plot of total sales across US, Canada, and Mexico. Sort in the following order: Mexico, Canada, US.\"",
+          goldenExampleThought:"As requested, I'll create a bar chart to visualize the median calories burned for Yoga, HIIT, Cardio, and Strength, with the bars arranged in that order. \nVisualize the data: \n1. Create a list `order` with elements 'Yoga', 'HIIT', 'Cardio', and 'Strength'.\n2. Create a bar chart using the `Workout_Type` column on the x-axis and the `Calories_Burned` column on the y-axis.\n3. Set x-axis title as 'Workout Type' and y-axis title as 'Median Calories Burned'.\n4. Use the `order` list to control the order of the bars.\n5. Add tooltips for columns `Workout_Type` and `Calories_Burned`.\n6. Set the title of the plot to 'Median Calories Burned by Workout Type'.\n7. Make the plot interactive enabling zooming and panning.\n8. Save the plot as a JSON file.",
+          goldenExampleRTU: "I'll create a bar chart to visualize the median calories burned by workout type.",
+          goldenExampleCode: `import altair as alt
+# Create a list \`order\` with elements 'Yoga', 'HIIT', 'Cardio', and 'Strength'.
+order = ['Yoga', 'HIIT', 'Cardio', 'Strength']
+# Create a bar chart using the \`Workout_Type\` column on the x-axis and the \`Calories_Burned\` column on the y-axis.
+chart = alt.Chart(median_calories_burned).mark_bar().encode(
+  # Set x-axis title as 'Workout Type' and y-axis title as 'Median Calories Burned'.
+  x=alt.X('Workout_Type', sort=order, title='Workout Type'),
+  # Use the \`order\` list to control the order of the bars.
+  y=alt.Y('Calories_Burned', title='Median Calories Burned'),
+  # Add tooltips for columns \`Workout_Type\` and \`Calories_Burned\`.
+  tooltip = ['Workout_Type', 'Calories_Burned']
+).properties(
+  # Set the title of the plot to 'Median Calories Burned by Workout Type'.
+  title='Median Calories Burned by Workout Type'
+).interactive() # Make the plot interactive enabling zooming and panning.
+# Save the chart to a JSON file
+chart.save('median_calories_burned_by_workout_type_bar_chart.json')`
+        },
+      ],
     },
   ]
