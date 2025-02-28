@@ -229,7 +229,7 @@ export default function Home() {
         `}</style>
       </Head>
 
-      {/* Fixed Sidebar */}
+      {/* Sidebar */}
       <div
         className={`${darkMode ? 'bg-gray-900 border-r border-gray-700' : 'bg-gray-800'} text-white ${sidebarOpen ? "w-64" : "w-16"} transition-all duration-300 ease-in-out fixed h-screen overflow-y-auto`}
       >
@@ -281,7 +281,7 @@ export default function Home() {
         )}
       </div>
 
-      {/* Main content with adjusted margin */}
+      {/* Main content */}
       <main className={`flex-grow p-8 ${sidebarOpen ? "ml-64" : "ml-16"} transition-all duration-300 ease-in-out`}>
         <h1 className="text-3xl font-bold mb-8">Policy Viewer</h1>
 
