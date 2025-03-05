@@ -1,4 +1,3 @@
-// topicsData.ts
 export type Section = {
     title: string
     content: string
@@ -231,6 +230,72 @@ chart = alt.Chart(median_calories_burned).mark_bar().encode(
 ).interactive() # Make the plot interactive enabling zooming and panning.
 # Save the chart to a JSON file
 chart.save('median_calories_burned_by_workout_type_bar_chart.json')`
+        },
+        {
+          name:"23L",
+          description:"Non-tooltip ChartsThe model should always add the relevant variables in the tooltip.",
+          goldenExampleThought:`As requested, I'll now create a pie chart using the aggregated data to visualize the distribution of marital status.
+Visualize the data:
+1. Create a pie chart using the \`marital.status\` and \`count\` columns.
+2. Use \`count\` as the theta and \`marital.status\` for the color.
+3. Set the title of the plot to 'Distribution of Marital Status'.
+4. Order the pie slices by \`percentage\` in descending order.
+5. Add \`percentage\` labels to the pie chart.
+6. Add tooltips for the \`marital.status\` and \`count\` columns and \`percentage\` with the format '.1%'.
+7. Save the plot to a JSON file.`,
+          goldenExampleRTU:"Now, I'll create a pie chart to show the distribution of marital status.",
+          goldenExampleCode:`import altair as alt
+# Create the base chart
+base = alt.Chart(df_plot).encode(theta=alt.Theta("count", stack=True))
+# Specify the outer radius of the arcs and encode color based on the \`marital.status\` 
+columnpie = base.mark_arc(outerRadius=120).encode(
+  color=alt.Color("marital.status"),
+  # Order the arcs by \`count\` in descending order
+  order=alt.Order("percentage", sort="descending"),
+  tooltip=["marital.status", "count", alt.Tooltip("percentage", format=".1%")]
+)
+# Add text to show the percentage on the chart
+text = base.mark_text(radius=140).encode(
+  text=alt.Text("percentage", format=".1%"),
+  order=alt.Order("percentage", sort="descending"),
+  color=alt.value("black") # Set the color of the labels to black
+)
+# Combine the pie chart and text
+chart = pie + text
+# Add title to the chart
+chart = chart.properties(title='Distribution of Marital Status')
+# Save the chart in json file
+chart.save('marital_status_pie_chart.json')`,
+        },
+        {
+          name:"24L",
+          description:`Non-interactive ChartsThe model should always make the chart interactive using .interactive() method to allow for zooming and panning.`,
+          goldenExampleThought:`As requested, I'll create a stacked bar chart using the \`Company\`, \`TypeName\`, and \`Number of Laptops\` columns to visualize the total number of laptops sold by each company, grouped by laptop type.Visualize the data:
+1. Create a stacked bar chart using the columns \`Company\`, \`TypeName\`, and \`Number of Laptops\`.
+2. Map the \`Company\` column to the x-axis and add title 'Company'.
+3. Map the \`Number of Laptops\` column to the y-axis and add title 'Number of Laptops'.
+4. Map the \`TypeName\` column to color.
+5. Add tooltips for columns \`Company\`, \`TypeName\`, and \`Number of Laptops\`.
+6. Add plot title as 'Total Laptops Sold by Company and Type'.
+7. Make the plot interactive enabling zooming and panning.
+8. Save the chart as a JSON file.`,
+          goldenExampleRTU:`Now, I'll create a stacked bar chart to visualize the number of laptops sold by company and type.`,
+          goldenExampleCode:`import altair as alt
+# Create a stacked bar chart
+chart = alt.Chart(df_plot).mark_bar().encode(
+  # Set the x-axis to display the companies
+  x=alt.X('Company', title='Company'),
+  # Set the y-axis to display the number of laptops sold
+  y=alt.Y('Number of Laptops', title='Number of Laptops'),
+  # Use different colors for each laptop
+  typecolor='TypeName',
+  # Add tooltips to show details when hovering over each bar
+  tooltip=['Company', 'TypeName', 'Number of Laptops']).properties(
+    # Set the chart title
+    title='Total Laptops Sold by Company and Type'
+    ).interactive() # Make the chart interactive for zooming and panning
+# Save the chart as a JSON file
+chart.save('total_laptops_sold_by_company_and_type_stacked_bar_chart.json')`
         },
       ],
     },
