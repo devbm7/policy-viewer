@@ -18,8 +18,8 @@ A Next.js React project for visualizing and exploring data with markdown renderi
 ## Installation
 1. Clone the repository
    ```bash
-   git clone https://your-repo-url.git
-   cd project-directory
+   git clone https://github.com/devbm7/policy-viewer.git
+   cd project-viewer
    ```
 
 2. Install dependencies
