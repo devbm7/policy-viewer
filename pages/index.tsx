@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect } from "react"
 import Head from "next/head"
+import Image from "next/image"
 import ReactMarkdown from "react-markdown"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
 import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism"
@@ -248,7 +249,7 @@ export default function Home() {
     <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'} flex`}>
       <Head>
         <title>Policy Viewer</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/logo.jpg" />
         <style jsx global>{`
           html.dark body {
             background-color: #111827;
@@ -267,14 +268,33 @@ export default function Home() {
         className={`${darkMode ? 'bg-gray-900 border-r border-gray-700' : 'bg-gray-800'} text-white ${sidebarOpen ? "w-64" : "w-16"} transition-all duration-300 ease-in-out fixed h-screen overflow-y-auto z-20`}
       >
         <div className="p-4 flex justify-between items-center">
+          {sidebarOpen ? (
+            <div className="flex items-center">
+              <Image 
+                src="/logo.jpg"
+                alt="Project Logo" 
+                width={40} 
+                height={40} 
+                className="mr-2"
+              />
+              <span>Topics</span>
+            </div>
+          ) : (
+            <Image 
+              src="/logo.jpg"
+              alt="Project Logo" 
+              width={30} 
+              height={30} 
+              className="mx-auto"
+            />
+          )}
+          
           <button
             className="text-left flex items-center"
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
             {sidebarOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
           </button>
-          
-          {sidebarOpen && <span>Topics</span>}
           
           <button 
             onClick={toggleDarkMode}
