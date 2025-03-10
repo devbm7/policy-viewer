@@ -70,6 +70,12 @@ export default function Home() {
     subtopic: '',
     section: null
   })
+  
+  // New state variables for text replacement feature
+  const [replacementText, setReplacementText] = useState("")
+  const [searchText, setSearchText] = useState("")
+  const [editingSection, setEditingSection] = useState<string | null>(null)
+  const [modifiedContent, setModifiedContent] = useState<{[key: string]: string}>({})
 
   // Initialize dark mode from localStorage or system preference
   useEffect(() => {
@@ -178,11 +184,24 @@ export default function Home() {
     setDarkMode(!darkMode)
   }
 
+  // Function to handle content replacement
+  const replaceInContent = (sectionId: string, originalContent: string) => {
+    if (!searchText) return
+    
+    const newContent = originalContent.replace(new RegExp(searchText, 'g'), replacementText)
+    setModifiedContent({
+      ...modifiedContent,
+      [sectionId]: newContent
+    })
+  }
+
+  // Updated copyToClipboard function to use modified content when available
   const copyToClipboard = useCallback((text: string, sectionId: string) => {
-    navigator.clipboard.writeText(text)
+    const contentToCopy = modifiedContent[sectionId] || text
+    navigator.clipboard.writeText(contentToCopy)
     setActiveSection(sectionId)
     setTimeout(() => setActiveSection(null), 2000)
-  }, [])
+  }, [modifiedContent])
   
   const copyLinkToClipboard = useCallback((id: string) => {
     const url = `${window.location.origin}${window.location.pathname}#${id}`
@@ -212,16 +231,29 @@ export default function Home() {
     }
   }
 
+  // Updated renderSection function to include replacement UI
   const renderSection = (title: string, content: string, topicIndex: number, subtopicIndex: number) => {
     const sectionSlug = title.replace(/\s+/g, "-").toLowerCase()
     const sectionId = `section-${topicIndex}-${subtopicIndex}-${sectionSlug}`
     const isCode = title === "Golden Example Code"
+    const displayContent = modifiedContent[sectionId] || content
     
     return (
       <div className="mb-4" id={sectionId}>
         <h3 className="text-xl font-semibold mb-2 flex items-center justify-between">
           <span>{title}</span>
           <div className="flex items-center">
+            {isCode && (
+              <button 
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 mr-2"
+                onClick={() => {
+                  setEditingSection(editingSection === sectionId ? null : sectionId)
+                }}
+                aria-label="Edit content"
+              >
+                {editingSection === sectionId ? "Cancel" : "Edit"}
+              </button>
+            )}
             <button 
               className="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 mr-2"
               onClick={() => copyLinkToClipboard(sectionId)}
@@ -238,8 +270,50 @@ export default function Home() {
             </button>
           </div>
         </h3>
+        
+        {editingSection === sectionId && (
+          <div className={`mb-2 p-4 ${darkMode ? 'bg-gray-700' : 'bg-gray-200'} rounded`}>
+            <div className="flex flex-col space-y-2">
+              <input
+                type="text"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                placeholder="Text to find"
+                className="p-2 rounded dark:bg-gray-800 dark:text-white"
+              />
+              <input
+                type="text"
+                value={replacementText}
+                onChange={(e) => setReplacementText(e.target.value)}
+                placeholder="Replace with"
+                className="p-2 rounded dark:bg-gray-800 dark:text-white"
+              />
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => replaceInContent(sectionId, content)}
+                  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+                >
+                  Replace
+                </button>
+                <button
+                  onClick={() => {
+                    // Reset any modifications
+                    const newModifiedContent = {...modifiedContent}
+                    delete newModifiedContent[sectionId]
+                    setModifiedContent(newModifiedContent)
+                    setEditingSection(null)
+                  }}
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                >
+                  Reset
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        
         <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} p-4 rounded shadow overflow-auto`}>
-          {renderContent(content, isCode)}
+          {renderContent(displayContent, isCode)}
         </div>
       </div>
     )
