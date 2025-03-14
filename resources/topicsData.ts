@@ -47,7 +47,7 @@ else:
           goldenExampleThought: "To find <Query's Requirement(s)>, I'll use the `<column name(s)>` columns.From the output of `df.info()`, it can be seen that the `<column-name(s)>` columns is/are of object type. From the output of `df.head()`, it is clear that `<column name(s)>` can be cleaned by removing the < non-numeric characters> character(s), and then converting it/them to numeric. Next, I'll <Query's Requirement(s)>.",
           goldenExampleRTU: "I'll start by organizing the `Total` column and proceed with the analysis.",
           goldenExampleCode: `# Remove '€' and ',' from the \`Total\` column
-df['Total'] = df['Total'].str.replace('€', '', regex=False).str.replace(',', '', regex=False)
+df['Total'] = df['Total'].astype(str).str.replace('€', '', regex=False).str.replace(',', '', regex=False)
   
 # and convert it to numeric
 df['Total'] = pd.to_numeric(df['Total'])
@@ -64,6 +64,7 @@ print(expensive_cost_code)`,
             goldenExampleThought: "In order to calculate the percentage of `GMV` across different brands, I'll use the `GMV` and `Type` columns.I first need to convert the `GMV` column to numeric as the output of `df.info()` shows it is currently of object type. From the output of `df.head()`, `GMV` does not apparently have any non-numeric characters and thus, I'll sample and print 20 non-numeric values in that column to understand how to clean and convert it to numeric.",
             goldenExampleRTU: "I'll start by looking into the `GMV` column to prepare it for analysis.",
             goldenExampleCode: `import numpy as np
+
 # Get all unique non-numeric values from \`GMV\`
 non_numeric_gmv_value = df[pd.to_numeric(df['GMV'], errors='coerce').isna()]['GMV'].unique()
     
@@ -214,6 +215,7 @@ Visualize the data:
 8. Save the plot as a JSON file.`,
           goldenExampleRTU: "I'll create a bar chart to visualize the median calories burned by workout type.",
           goldenExampleCode: `import altair as alt
+
 # Create a list \`order\` with elements 'Yoga', 'HIIT', 'Cardio', and 'Strength'.
 order = ['Yoga', 'HIIT', 'Cardio', 'Strength']
 # Create a bar chart using the \`Workout_Type\` column on the x-axis and the \`Calories_Burned\` column on the y-axis.
@@ -245,6 +247,7 @@ Visualize the data:
 7. Save the plot to a JSON file.`,
           goldenExampleRTU:"Now, I'll create a pie chart to show the distribution of marital status.",
           goldenExampleCode:`import altair as alt
+
 # Create the base chart
 base = alt.Chart(df_plot).encode(theta=alt.Theta("count", stack=True))
 # Specify the outer radius of the arcs and encode color based on the \`marital.status\` 
@@ -281,6 +284,7 @@ chart.save('marital_status_pie_chart.json')`,
 8. Save the chart as a JSON file.`,
           goldenExampleRTU:`Now, I'll create a stacked bar chart to visualize the number of laptops sold by company and type.`,
           goldenExampleCode:`import altair as alt
+          
 # Create a stacked bar chart
 chart = alt.Chart(df_plot).mark_bar().encode(
   # Set the x-axis to display the companies
