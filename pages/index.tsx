@@ -7,7 +7,7 @@ import ReactMarkdown from "react-markdown"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
 import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism"
 import { Copy, Check, ChevronRight, ChevronLeft, Sun, Moon, Link } from "lucide-react"
-import { Topic, exampleTopics } from "../resources/topicsData1"
+import { Topic, exampleTopics } from "../resources/topicsData"
 
 // Custom components for ReactMarkdown to handle nested code blocks correctly
 const components = {
