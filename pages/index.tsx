@@ -35,9 +35,8 @@ const components = {
       </code>
     )
   },
-  // Add specific styling for ordered lists to display numbers
-  ol: ({ ordered, className, children, ...props }: {
-    ordered?: boolean;
+  // Fixed: Remove the ordered prop which was causing the warning
+  ol: ({ className, children, ...props }: {
     className?: string;
     children: React.ReactNode;
   }) => {

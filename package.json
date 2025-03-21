@@ -13,6 +13,7 @@
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
     "clsx": "^2.1.1",
+    "localtunnel": "^2.0.2",
     "lucide-react": "^0.476.0",
     "next": "^15.2.0",
     "react": "^18.2.0",

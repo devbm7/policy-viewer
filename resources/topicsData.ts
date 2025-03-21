@@ -25,15 +25,15 @@ export type Section = {
           description: 'Categorical sampling is necessary when at least one relevant column is of the object data type, is categorical in nature, and is required to answer the query.',
           goldenExampleThought: "In order to <Query's Requirement(s)>, I'll first inspect the values in the `<column name(s)>` column. This will help me unify any identical entries that may be represented inconsistently.",
           goldenExampleRTU: "I'll start by looking into the payment methods used by your clients.",
-          goldenExampleCode: `# Get all unique values from \`Payment System Name\`
-unique_values = df['Payment System Name'].unique()
-# Check the number of unique values in \`Payment System Name\`
+          goldenExampleCode: `# Get all unique values from \`Z\`
+unique_values = df['Z'].unique()
+# Check the number of unique values in \`Z\`
 if len(unique_values) > 50:
     # If there are too many unique values, sample the top 50
-    top_occurring_values = df['Payment System Name'].value_counts().head(50).index.tolist()
+    top_occurring_values = df['Z'].value_counts().head(50).index.tolist()
     print(top_occurring_values)
 else:
-    # Otherwise print all unique values in \`Payment System Name\`
+    # Otherwise print all unique values in \`Z\`
     print(unique_values)`,
         },
       ],
