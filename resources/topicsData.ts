@@ -18,6 +18,42 @@ export type Section = {
   
   export const exampleTopics: Topic[] = [
     {
+      name: "Non-Standard Datasets",
+      subtopics: [
+        {
+          name: "Scenario 2",
+          description: "The header is missing in the dataset, but the names of the columns of interest can be deduced from the column values.",
+          goldenExampleThought: `Upon reviewing the first few rows, it seems that the dataset lacks proper headers, as the first row appears to be part of the data rather than containing meaningful labels. However, based on the column values, I can deduce that the column at index 0 (\`January\`) represents the \`Month\`, and the column at index 3 (\`250\`) contains \`Cost\` information. These columns are clearly distinguishable, and no other columns have similar values that could lead to confusion. To prepare the dataframe for analysis, I'll reload the dataset using the 'header=None' option, treating the first row as data instead of headers. Then, I'll rename the columns at indices 0 and 3 to \`Month\` and \`Cost\`, respectively (assuming a 0-based index). Finally, I'll display the first five rows along with the column names and data types, as reloading the dataset might alter the data types.`,
+          goldenExampleRTU: "**Note:** It looks like the dataset's missing some headers, so I'll figure out the column names from the values themselves.",
+          goldenExampleCode: `# Load the csv file without the header
+df = pd.read_csv('Truck Repairs for 2023 - Sheet1 - Dr. Victoria Gamble.csv', header=None)
+
+# Rename the columns
+df.rename(columns={0: 'Month', 3: 'Cost'}, inplace=True)
+
+# Display the first 5 rows
+print(df.head().to_markdown(index=False, numalign="left", stralign="left"))
+
+# Print the column names and their data types
+print(df.info())`
+        },
+        {
+          name: "Scenario 5",
+          description: "",
+          goldenExampleThought: `The first five rows suggest that the dataset includes metadata before the actual header, as row 2 contains meaningful column names like \`Product\` and \`Noon\` that are relevant to the user request and accurately describe the data below. To address this, I'll reload the dataset using the same parameters as before, adding the 'header' parameter set to 1 (accounting for the 0-based index). I'll then display the first 5 rows along with the columns and their types, as the reload might alter the column types.`,
+          goldenExampleRTU: `**Note:** It looks like the dataset wasn't loaded with the correct headers due to extra information at the top. I'll reload it with the proper headers and continue with the analysis.`,
+          goldenExampleCode: `# Read the CSV file into a DataFrame with the correct header starting from row 2
+df = pd.read_csv("product_sales_-_ps pivot table.csv", encoding='latin-1', header=1)
+
+# Display the first 5 rows
+print(df.head().to_markdown(index=False, numalign="left", stralign="left"))
+
+# Print the column names and their data types
+print(df.info())`
+        },
+      ]
+    },
+    {
       name: "Categorical Sampling",
       subtopics: [
         {
