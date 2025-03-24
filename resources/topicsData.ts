@@ -27,6 +27,7 @@ export type Section = {
           goldenExampleRTU: "I'll start by looking into the payment methods used by your clients.",
           goldenExampleCode: `# Get all unique values from \`Z\`
 unique_values = df['Z'].unique()
+
 # Check the number of unique values in \`Z\`
 if len(unique_values) > 50:
     # If there are too many unique values, sample the top 50
@@ -66,15 +67,15 @@ print(expensive_cost_code)`,
             goldenExampleCode: `import numpy as np
 
 # Get all unique non-numeric values from \`GMV\`
-non_numeric_gmv_value = df[pd.to_numeric(df['GMV'], errors='coerce').isna()]['GMV'].unique()
+non_numeric_values = df[pd.to_numeric(df['GMV'], errors='coerce').isna()]['GMV'].unique()
     
 if (len(non_numeric_gmv_value  ) > 20):
     # Sample 20 of them if there are too many unique values
-    print(f"Non Numeric values in GMV {np.random.choice(non_numeric_gmv_value  , 20, replace=False)}")
+    print(f"Non Numeric values in GMV {np.random.choice(non_numeric_values  , 20, replace=False)}")
     
 else:
     # Otherwise print all unique non-numeric values from \`GMV\`
-    print(f"Non Numeric values in GMV {non_numeric_gmv_value}")`,
+    print(f"Non Numeric values in GMV {non_numeric_values}")`,
           },
           {
             name: "3A Conversion following failed 2A",
@@ -188,12 +189,14 @@ print(f'Best Performing Model: {best_model}')`
                 description: "[Query - Example] Which pokemon has the highest HP? [Thought] Note: --> We don't have an exact policy for this yet. Basically thought must go for find the maximum value, filter the dataset with the rows with that maximum value to find every rows with maximum value without missing any row.",
                 goldenExampleThought: "To identify the pokemon(s) with the highest HP, I'll analyze the `pokemon_hp` column to find the pokemons with the highest HP. First, I'll find the maximum HP in this dataset, then I'll filter all pokemons with maximum HP.",
                 goldenExampleRTU: "I'll look into the pokemons to find with highest HP pokemon.",
-                goldenExampleCode: `# Find the maximum HP in the \`pokemon_hp\` column
-maximum_hp = df['pokemon_hp'].max()
-# Filter the pokemons with maximum HP
-filtered_df = df[df['pokemon_hp'] == maximum_hp]
-# Print the pokemons with maximum HP
-print(filtered_df[['pokemon' , 'pokemon_hp']])`
+                goldenExampleCode: `# Find the maximum \`Quantity_Sold\`
+maximum_quantity_sold_liters = avg_quantity_sorted['Quantity_Sold'].max()
+
+# Filter the data with the maximum \`Quantity_Sold\`
+filtered_df = avg_quantity_sorted[avg_quantity_sorted['Quantity_Sold'] == maximum_quantity_sold_liters]
+
+# Print the data with the maximum \`Quantity_Sold\`
+print(filtered_df[['Fuel_Type' , 'Quantity_Sold']].to_markdown(index=False, numalign="left", stralign="left"))`
             },
         ],
     },
