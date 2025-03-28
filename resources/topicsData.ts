@@ -39,7 +39,7 @@ print(df.info())`
         },
         {
           name: "Scenario 5",
-          description: "",
+          description: "The dataset contains metadata or additional data in the first row(s) that are not part of the header, with the actual headers located in a subsequent row.",
           goldenExampleThought: `The first five rows suggest that the dataset includes metadata before the actual header, as row 2 contains meaningful column names like \`Product\` and \`Noon\` that are relevant to the user request and accurately describe the data below. To address this, I'll reload the dataset using the same parameters as before, adding the 'header' parameter set to 1 (accounting for the 0-based index). I'll then display the first 5 rows along with the columns and their types, as the reload might alter the column types.`,
           goldenExampleRTU: `**Note:** It looks like the dataset wasn't loaded with the correct headers due to extra information at the top. I'll reload it with the proper headers and continue with the analysis.`,
           goldenExampleCode: `# Read the CSV file into a DataFrame with the correct header starting from row 2
@@ -105,10 +105,9 @@ print(expensive_cost_code)`,
 # Get all unique non-numeric values from \`GMV\`
 non_numeric_values = df[pd.to_numeric(df['GMV'], errors='coerce').isna()]['GMV'].unique()
     
-if (len(non_numeric_gmv_value  ) > 20):
+if (len(non_numeric_values) > 20):
     # Sample 20 of them if there are too many unique values
-    print(f"Non Numeric values in GMV {np.random.choice(non_numeric_values  , 20, replace=False)}")
-    
+    print(f"Non Numeric values in GMV {np.random.choice(non_numeric_values, 20, replace=False)}")
 else:
     # Otherwise print all unique non-numeric values from \`GMV\`
     print(f"Non Numeric values in GMV {non_numeric_values}")`,
