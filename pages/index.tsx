@@ -5,8 +5,23 @@ import Head from "next/head"
 import Image from "next/image"
 import ReactMarkdown from "react-markdown"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
-import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism"
-import { Copy, Check, ChevronRight, ChevronLeft, Sun, Moon, Link } from "lucide-react"
+import { vscDarkPlus, nord } from "react-syntax-highlighter/dist/cjs/styles/prism"
+import { 
+  Copy, 
+  Check, 
+  ChevronRight, 
+  ChevronLeft, 
+  Sun, 
+  Moon, 
+  Link, 
+  Search, 
+  Edit, 
+  X,
+  BookOpen,
+  Code,
+  FileText,
+  Lightbulb
+} from "lucide-react"
 import { Topic, exampleTopics } from "../resources/topicsData"
 
 // Custom components for ReactMarkdown to handle nested code blocks correctly
@@ -22,31 +37,43 @@ const components = {
         language={match[1]}
         style={vscDarkPlus}
         PreTag="div"
+        customStyle={{
+          borderRadius: '0.5rem',
+          margin: '1rem 0',
+        }}
         {...props}
       >
         {String(children).replace(/\n$/, '')}
       </SyntaxHighlighter>
     ) : (
       <code 
-        className={`${className || ''} ${inline ? 'bg-gray-200 dark:bg-gray-700 px-1 py-0.5 rounded text-red-500 dark:text-red-400' : ''}`} 
+        className={`${className || ''} ${inline ? 'bg-gray-200 dark:bg-gray-700 px-1 py-0.5 rounded text-red-500 dark:text-red-400 font-mono' : ''}`} 
         {...props}
       >
         {children}
       </code>
     )
   },
-  // Fixed: Remove the ordered prop which was causing the warning
   ol: ({ className, children, ...props }: {
     className?: string;
     children: React.ReactNode;
   }) => {
     return (
-      <ol className="list-decimal pl-8 mb-4" {...props}>
+      <ol className="list-decimal pl-8 mb-4 space-y-2" {...props}>
         {children}
       </ol>
     )
   },
-  // Also style list items for better presentation
+  ul: ({ className, children, ...props }: {
+    className?: string;
+    children: React.ReactNode;
+  }) => {
+    return (
+      <ul className="list-disc pl-8 mb-4 space-y-2" {...props}>
+        {children}
+      </ul>
+    )
+  },
   li: ({ className, children, ...props }: {
     className?: string;
     children: React.ReactNode;
@@ -56,8 +83,104 @@ const components = {
         {children}
       </li>
     )
+  },
+  p: ({ className, children, ...props }: {
+    className?: string;
+    children: React.ReactNode;
+  }) => {
+    return (
+      <p className="mb-4 leading-relaxed" {...props}>
+        {children}
+      </p>
+    )
+  },
+  h1: ({ className, children, ...props }: {
+    className?: string;
+    children: React.ReactNode;
+  }) => {
+    return (
+      <h1 className="text-3xl font-bold mb-6 pb-2 border-b border-gray-200 dark:border-gray-700" {...props}>
+        {children}
+      </h1>
+    )
+  },
+  h2: ({ className, children, ...props }: {
+    className?: string;
+    children: React.ReactNode;
+  }) => {
+    return (
+      <h2 className="text-2xl font-bold mt-8 mb-4" {...props}>
+        {children}
+      </h2>
+    )
+  },
+  h3: ({ className, children, ...props }: {
+    className?: string;
+    children: React.ReactNode;
+  }) => {
+    return (
+      <h3 className="text-xl font-semibold mt-6 mb-3" {...props}>
+        {children}
+      </h3>
+    )
   }
 }
+
+// Custom button component
+const Button = ({ 
+  children, 
+  onClick, 
+  variant = "primary", 
+  size = "md",
+  className = "",
+  ...props 
+}: {
+  children: React.ReactNode;
+  onClick?: () => void;
+  variant?: "primary" | "secondary" | "outline" | "ghost";
+  size?: "sm" | "md" | "lg";
+  className?: string;
+  [key: string]: any;
+}) => {
+  const sizeClasses = {
+    sm: "py-1 px-3 text-sm",
+    md: "py-2 px-4 text-base",
+    lg: "py-3 px-6 text-lg"
+  };
+  
+  const variantClasses = {
+    primary: "bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg",
+    secondary: "bg-gray-600 hover:bg-gray-700 text-white shadow-md hover:shadow-lg",
+    outline: "bg-transparent border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300",
+    ghost: "bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
+  };
+  
+  return (
+    <button
+      onClick={onClick}
+      className={`rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 
+      ${sizeClasses[size]} ${variantClasses[variant]} ${className}`}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+};
+
+// Custom card component
+const Card = ({ 
+  children, 
+  className = "" 
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => {
+  return (
+    <div className={`bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden ${className}`}>
+      {children}
+    </div>
+  );
+};
 
 export default function Home() {
   const [showRaw, setShowRaw] = useState(false)
@@ -69,6 +192,7 @@ export default function Home() {
     subtopic: '',
     section: null
   })
+  const [searchQuery, setSearchQuery] = useState("")
   
   // New state variables for text replacement feature
   const [replacementText, setReplacementText] = useState("")
@@ -192,6 +316,9 @@ export default function Home() {
       ...modifiedContent,
       [sectionId]: newContent
     })
+    
+    // Reset editing section after successful replacement
+    setEditingSection(null)
   }
 
   // Updated copyToClipboard function to use modified content when available
@@ -205,20 +332,29 @@ export default function Home() {
   const copyLinkToClipboard = useCallback((id: string) => {
     const url = `${window.location.origin}${window.location.pathname}#${id}`
     navigator.clipboard.writeText(url)
-    // Show a notification or toast here if you want
-    // alert("Link copied to clipboard!")
+    // Show a temporary message
+    setActiveSection(`link-${id}`)
+    setTimeout(() => setActiveSection(null), 2000)
   }, [])
 
   // This function ensures correct display of multi-line content with nested code blocks
   const renderContent = (content: string, isCode: boolean) => {
     if (isCode) {
       return (
-        <SyntaxHighlighter language="python" style={vscDarkPlus} showLineNumbers>
+        <SyntaxHighlighter 
+          language="python" 
+          style={darkMode ? vscDarkPlus : nord} 
+          showLineNumbers
+          customStyle={{
+            borderRadius: '0.5rem',
+            fontSize: '0.95rem',
+          }}
+        >
           {content}
         </SyntaxHighlighter>
       )
     } else if (showRaw) {
-      return <pre className="whitespace-pre-wrap">{content}</pre>
+      return <pre className="whitespace-pre-wrap font-mono text-sm">{content}</pre>
     } else {
       return (
         <div className="markdown-content">
@@ -230,6 +366,22 @@ export default function Home() {
     }
   }
 
+  // Get icon for section types
+  const getSectionIcon = (title: string) => {
+    switch(title) {
+      case "Description":
+        return <FileText size={18} className="mr-2" />;
+      case "Golden Example Thought":
+        return <Lightbulb size={18} className="mr-2" />;
+      case "Golden Example RTU":
+        return <BookOpen size={18} className="mr-2" />;
+      case "Golden Example Code":
+        return <Code size={18} className="mr-2" />;
+      default:
+        return null;
+    }
+  };
+
   // Updated renderSection function to include replacement UI
   const renderSection = (title: string, content: string, topicIndex: number, subtopicIndex: number) => {
     const sectionSlug = title.replace(/\s+/g, "-").toLowerCase()
@@ -238,88 +390,139 @@ export default function Home() {
     const displayContent = modifiedContent[sectionId] || content
     
     return (
-      <div className="mb-4" id={sectionId}>
-        <h3 className="text-xl font-semibold mb-2 flex items-center justify-between">
-          <span>{title}</span>
-          <div className="flex items-center">
+      <div className="mb-6" id={sectionId}>
+        <div className="flex items-center justify-between mb-2 border-b dark:border-gray-700 pb-2">
+          <h3 className="text-xl font-semibold flex items-center">
+            {getSectionIcon(title)}
+            <span>{title}</span>
+          </h3>
+          <div className="flex items-center space-x-2">
             {isCode && (
-              <button 
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 mr-2"
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => {
                   setEditingSection(editingSection === sectionId ? null : sectionId)
                 }}
                 aria-label="Edit content"
+                className="group"
               >
-                {editingSection === sectionId ? "Cancel" : "Edit"}
-              </button>
+                {editingSection === sectionId ? (
+                  <X size={18} className="text-gray-500 group-hover:text-red-500" />
+                ) : (
+                  <Edit size={18} className="text-gray-500 group-hover:text-blue-500" />
+                )}
+              </Button>
             )}
-            <button 
-              className="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 mr-2"
+            <Button 
+              variant="ghost"
+              size="sm"
               onClick={() => copyLinkToClipboard(sectionId)}
               aria-label="Copy link to section"
+              className="group"
             >
-              <Link size={20} />
-            </button>
-            <button 
-              className="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100"
+              <Link size={18} className={`
+                text-gray-500 group-hover:text-blue-500
+                ${activeSection === `link-${sectionId}` ? 'text-green-500' : ''}
+              `} />
+            </Button>
+            <Button 
+              variant="ghost"
+              size="sm"
               onClick={() => copyToClipboard(content, sectionId)}
               aria-label="Copy content"
+              className="group"
             >
-              {activeSection === sectionId ? <Check size={20} /> : <Copy size={20} />}
-            </button>
+              {activeSection === sectionId ? (
+                <Check size={18} className="text-green-500" />
+              ) : (
+                <Copy size={18} className="text-gray-500 group-hover:text-blue-500" />
+              )}
+            </Button>
           </div>
-        </h3>
+        </div>
         
         {editingSection === sectionId && (
-          <div className={`mb-2 p-4 ${darkMode ? 'bg-gray-700' : 'bg-gray-200'} rounded`}>
-            <div className="flex flex-col space-y-2">
-              <input
-                type="text"
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
-                placeholder="Text to find"
-                className="p-2 rounded dark:bg-gray-800 dark:text-white"
-              />
-              <input
-                type="text"
-                value={replacementText}
-                onChange={(e) => setReplacementText(e.target.value)}
-                placeholder="Replace with"
-                className="p-2 rounded dark:bg-gray-800 dark:text-white"
-              />
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => replaceInContent(sectionId, content)}
-                  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
-                >
-                  Replace
-                </button>
-                <button
-                  onClick={() => {
-                    // Reset any modifications
-                    const newModifiedContent = {...modifiedContent}
-                    delete newModifiedContent[sectionId]
-                    setModifiedContent(newModifiedContent)
-                    setEditingSection(null)
-                  }}
-                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
-                >
-                  Reset
-                </button>
+          <Card className="mb-4 border border-blue-400 dark:border-blue-600">
+            <div className="p-4">
+              <div className="flex flex-col space-y-3">
+                <div className="relative">
+                  <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="text"
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                    placeholder="Text to find"
+                    className="pl-10 p-2 w-full rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div className="relative">
+                  <Edit size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="text"
+                    value={replacementText}
+                    onChange={(e) => setReplacementText(e.target.value)}
+                    placeholder="Replace with"
+                    className="pl-10 p-2 w-full rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div className="flex space-x-3">
+                  <Button
+                    onClick={() => replaceInContent(sectionId, content)}
+                    variant="primary"
+                    size="sm"
+                    className="flex-1"
+                    disabled={!searchText}
+                  >
+                    Replace All
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      // Reset any modifications
+                      const newModifiedContent = {...modifiedContent}
+                      delete newModifiedContent[sectionId]
+                      setModifiedContent(newModifiedContent)
+                      setEditingSection(null)
+                    }}
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                  >
+                    Reset
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
+          </Card>
         )}
         
-        <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} p-4 rounded shadow overflow-auto`}>
-          {renderContent(displayContent, isCode)}
-        </div>
+        <Card className={`overflow-auto ${isCode ? 'max-h-[500px]' : ''}`}>
+          <div className="p-4">
+            {renderContent(displayContent, isCode)}
+          </div>
+        </Card>
       </div>
     )
   }
 
+  // Filter topics and subtopics based on search query
+  const filteredTopics = searchQuery 
+    ? exampleTopics
+        .map(topic => ({
+          ...topic,
+          subtopics: topic.subtopics.filter(subtopic => 
+            subtopic.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            subtopic.description.toLowerCase().includes(searchQuery.toLowerCase())
+          )
+        }))
+        .filter(topic => 
+          topic.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          topic.subtopics.length > 0
+        )
+    : exampleTopics;
+
   return (
-    <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'} flex`}>
+    <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'} flex transition-colors duration-300`}>
       <Head>
         <title>Policy Viewer</title>
         <link rel="icon" href="/logo.jpg" />
@@ -333,162 +536,254 @@ export default function Home() {
           html {
             scroll-behavior: smooth;
           }
+          
+          /* Better focus styles */
+          *:focus-visible {
+            outline: 2px solid #3b82f6;
+            outline-offset: 2px;
+          }
         `}</style>
       </Head>
 
       {/* Sidebar */}
       <div
-        className={`${darkMode ? 'bg-gray-900 border-r border-gray-700' : 'bg-gray-800'} text-white ${sidebarOpen ? "w-64" : "w-16"} transition-all duration-300 ease-in-out fixed h-screen overflow-y-auto z-20`}
+        className={`${
+          darkMode 
+            ? 'bg-gray-900 border-r border-gray-700 text-gray-100' 
+            : 'bg-white border-r border-gray-200 text-gray-800'
+        } ${
+          sidebarOpen ? "w-72" : "w-20"
+        } transition-all duration-300 ease-in-out fixed h-screen overflow-hidden z-20 shadow-lg`}
       >
-        <div className="p-4 flex justify-between items-center">
+        <div className={`p-4 flex ${sidebarOpen ? "justify-between" : "justify-center"} items-center border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
           {sidebarOpen ? (
             <div className="flex items-center">
+              <div className="relative w-10 h-10 rounded-full overflow-hidden">
+                <Image 
+                  src="/logo.jpg"
+                  alt="Project Logo" 
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <span className="ml-3 font-semibold">Policy Viewer</span>
+            </div>
+          ) : (
+            <div className="relative w-10 h-10 rounded-full overflow-hidden">
               <Image 
                 src="/logo.jpg"
                 alt="Project Logo" 
-                width={40} 
-                height={40} 
-                className="mr-2"
+                fill
+                className="object-cover"
               />
-              <span>Topics</span>
             </div>
-          ) : (
-            <Image 
-              src="/logo.jpg"
-              alt="Project Logo" 
-              width={30} 
-              height={30} 
-              className="mx-auto"
-            />
           )}
           
-          <button
-            className="text-left flex items-center"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-          >
-            {sidebarOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
-          </button>
-          
-          <button 
-            onClick={toggleDarkMode}
-            className="p-2 rounded-full hover:bg-gray-700"
-            aria-label="Toggle dark mode"
-          >
-            {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-          </button>
+          <div className="flex items-center space-x-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleDarkMode}
+              aria-label="Toggle dark mode"
+              className="rounded-full p-2"
+            >
+              {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+            </Button>
+            
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+              className="rounded-full p-2"
+            >
+              {sidebarOpen ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
+            </Button>
+          </div>
         </div>
+        
         {sidebarOpen && (
           <>
-            <div className="p-4 overflow-y-auto">
-              <button
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full"
-                onClick={() => setShowRaw(!showRaw)}
-              >
-                {showRaw ? "Show Compiled" : "Show Raw"}
-              </button>
+            <div className="p-4">
+              <div className="relative">
+                <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search topics..."
+                  className="pl-10 p-2 w-full rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              
+              <div className="flex space-x-2 mt-4">
+                <Button
+                  onClick={() => setShowRaw(!showRaw)}
+                  variant={showRaw ? "primary" : "outline"}
+                  size="sm"
+                  className="flex-1"
+                >
+                  {showRaw ? "Raw Mode" : "Formatted"}
+                </Button>
+              </div>
             </div>
-            <nav className="pb-16">
-              {exampleTopics.map((topic, topicIndex) => (
-                <div key={topicIndex} className="mb-4">
-                  <h2 className="text-lg font-semibold px-4 py-2">
+            
+            <div className="overflow-y-auto h-[calc(100vh-180px)] hide-scrollbar px-2">
+              <nav className="pb-16">
+                {filteredTopics.map((topic, topicIndex) => (
+                  <div key={topicIndex} className="mb-2">
                     <a 
                       href={`#topic-${topicIndex}`}
-                      className="hover:text-gray-300"
+                      className={`
+                        block rounded-lg px-3 py-2 font-medium
+                        ${currentBreadcrumbs.topic === topic.name
+                          ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400'
+                          : 'hover:bg-gray-100 dark:hover:bg-gray-800/60'
+                        }
+                        transition-colors duration-150
+                      `}
                     >
                       {topic.name}
                     </a>
-                  </h2>
-                  <ul>
-                    {topic.subtopics.map((subtopic, subtopicIndex) => (
-                      <li key={subtopicIndex} className="px-4 py-1">
-                        <a 
-                          href={`#subtopic-${topicIndex}-${subtopicIndex}`} 
-                          className="hover:text-gray-300"
-                        >
-                          {subtopic.name}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </nav>
+                    
+                    {topic.subtopics.length > 0 && (
+                      <ul className="mt-1 ml-2">
+                        {topic.subtopics.map((subtopic, subtopicIndex) => (
+                          <li key={subtopicIndex}>
+                            <a 
+                              href={`#subtopic-${topicIndex}-${subtopicIndex}`}
+                              className={`
+                                block rounded-lg px-3 py-1.5 mb-1 text-sm
+                                ${currentBreadcrumbs.subtopic === subtopic.name
+                                  ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                                  : 'hover:bg-gray-100 dark:hover:bg-gray-800/40 text-gray-700 dark:text-gray-300'
+                                }
+                                transition-colors duration-150
+                              `}
+                            >
+                              {subtopic.name}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                ))}
+              </nav>
+            </div>
           </>
         )}
       </div>
 
       {/* Breadcrumbs - Fixed at the top of the main content */}
-      <div className={`fixed ${sidebarOpen ? "ml-64" : "ml-16"} z-10 top-0 left-0 right-0 p-4 ${darkMode ? 'bg-gray-900 border-b border-gray-700' : 'bg-gray-100 border-b border-gray-200'} transition-all duration-300 ease-in-out`}>
-        <div className="flex items-center text-sm">
-          {currentBreadcrumbs.topic && (
-            <>
-              <span className={`${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-                {currentBreadcrumbs.topic}
-              </span>
-              {currentBreadcrumbs.subtopic && (
-                <>
-                  <span className="mx-2">/</span>
-                  <span className={`${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-                    {currentBreadcrumbs.subtopic}
-                  </span>
-                </>
-              )}
-              {currentBreadcrumbs.section && (
-                <>
-                  <span className="mx-2">/</span>
-                  <span className={`${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-                    {currentBreadcrumbs.section}
-                  </span>
-                </>
-              )}
-            </>
-          )}
+      <div className={`fixed ${sidebarOpen ? "left-72" : "left-20"} z-10 top-0 right-0 backdrop-blur-sm bg-opacity-80 ${darkMode ? 'bg-gray-900/80 border-b border-gray-700' : 'bg-white/80 border-b border-gray-200'} transition-all duration-300 ease-in-out shadow-sm`}>
+        <div className="flex items-center h-14 px-6">
+          <div className="flex items-center text-sm">
+            {currentBreadcrumbs.topic && (
+              <>
+                <a 
+                  href={`#topic-${exampleTopics.findIndex(t => t.name === currentBreadcrumbs.topic)}`}
+                  className={`${darkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'} hover:underline`}
+                >
+                  {currentBreadcrumbs.topic}
+                </a>
+                {currentBreadcrumbs.subtopic && (
+                  <>
+                    <ChevronRight size={16} className="mx-2 text-gray-400" />
+                    <a 
+                      href={`#subtopic-${exampleTopics.findIndex(t => t.name === currentBreadcrumbs.topic)}-${exampleTopics.find(t => t.name === currentBreadcrumbs.topic)?.subtopics.findIndex(s => s.name === currentBreadcrumbs.subtopic)}`}
+                      className={`${darkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'} hover:underline`}
+                    >
+                      {currentBreadcrumbs.subtopic}
+                    </a>
+                  </>
+                )}
+                {currentBreadcrumbs.section && (
+                  <>
+                    <ChevronRight size={16} className="mx-2 text-gray-400" />
+                    <span className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                      {currentBreadcrumbs.section}
+                    </span>
+                  </>
+                )}
+              </>
+            )}
+          </div>
         </div>
       </div>
 
       {/* Main content */}
-      <main className={`flex-grow p-8 pt-16 ${sidebarOpen ? "ml-64" : "ml-16"} transition-all duration-300 ease-in-out`}>
-        <h1 className="text-3xl font-bold mb-8">Policy Viewer</h1>
+      <main className={`flex-grow p-8 pt-20 ${sidebarOpen ? "ml-72" : "ml-20"} transition-all duration-300 ease-in-out`}>
+        <div className="max-w-5xl mx-auto">
+          <h1 className="text-3xl font-bold mb-8 text-center">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
+              Policy Viewer
+            </span>
+          </h1>
 
-        {exampleTopics.map((topic, topicIndex) => (
-          <div key={topicIndex} className="mb-8">
-            <h2 
-              id={`topic-${topicIndex}`}
-              className="text-2xl font-bold mb-4 flex items-center"
-            >
-              <span>{topic.name}</span>
-              <button 
-                className="ml-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100"
-                onClick={() => copyLinkToClipboard(`topic-${topicIndex}`)}
-                aria-label="Copy link to topic"
+          {filteredTopics.map((topic, topicIndex) => (
+            <div key={topicIndex} className="mb-12">
+              <div 
+                id={`topic-${topicIndex}`}
+                className={`
+                  mb-6 px-6 py-4 rounded-lg 
+                  ${darkMode ? 'bg-gray-800/50 border border-gray-700' : 'bg-white border-gray-200 shadow-md border'}
+                `}
               >
-                <Link size={16} />
-              </button>
-            </h2>
-            {topic.subtopics.map((subtopic, subtopicIndex) => (
-              <div key={subtopicIndex} className={`mb-6 ${darkMode ? 'bg-gray-800' : 'bg-gray-200'} p-4 rounded`}>
-                <h3 
-                  id={`subtopic-${topicIndex}-${subtopicIndex}`}
-                  className="text-xl font-semibold mb-4 flex items-center"
-                >
-                  <span>{subtopic.name}</span>
-                  <button 
-                    className="ml-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100"
-                    onClick={() => copyLinkToClipboard(`subtopic-${topicIndex}-${subtopicIndex}`)}
-                    aria-label="Copy link to subtopic"
+                <h2 className="text-2xl font-bold flex items-center justify-between">
+                  <span>{topic.name}</span>
+                  <Button 
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => copyLinkToClipboard(`topic-${topicIndex}`)}
+                    aria-label="Copy link to topic"
+                    className="group"
                   >
-                    <Link size={16} />
-                  </button>
-                </h3>
-                {renderSection("Description", subtopic.description, topicIndex, subtopicIndex)}
-                {renderSection("Golden Example Thought", subtopic.goldenExampleThought, topicIndex, subtopicIndex)}
-                {renderSection("Golden Example RTU", subtopic.goldenExampleRTU, topicIndex, subtopicIndex)}
-                {renderSection("Golden Example Code", subtopic.goldenExampleCode, topicIndex, subtopicIndex)}
+                    <Link size={16} className={`
+                      text-gray-500 group-hover:text-blue-500
+                      ${activeSection === `link-topic-${topicIndex}` ? 'text-green-500' : ''}
+                    `} />
+                  </Button>
+                </h2>
               </div>
-            ))}
-          </div>
-        ))}
+              
+              {topic.subtopics.map((subtopic, subtopicIndex) => (
+                <div key={subtopicIndex} className="mb-10">
+                  <div 
+                    id={`subtopic-${topicIndex}-${subtopicIndex}`}
+                    className={`
+                      mb-6 px-6 py-3 rounded-lg
+                      ${darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200 shadow-sm'}
+                    `}
+                  >
+                    <h3 className="text-xl font-semibold flex items-center justify-between">
+                      <span>{subtopic.name}</span>
+                      <Button 
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => copyLinkToClipboard(`subtopic-${topicIndex}-${subtopicIndex}`)}
+                        aria-label="Copy link to subtopic"
+                        className="group"
+                      >
+                        <Link size={16} className={`
+                          text-gray-500 group-hover:text-blue-500
+                          ${activeSection === `link-subtopic-${topicIndex}-${subtopicIndex}` ? 'text-green-500' : ''}
+                        `} />
+                      </Button>
+                    </h3>
+                  </div>
+                  
+                  {renderSection("Description", subtopic.description, topicIndex, subtopicIndex)}
+                  {renderSection("Golden Example Thought", subtopic.goldenExampleThought, topicIndex, subtopicIndex)}
+                  {renderSection("Golden Example RTU", subtopic.goldenExampleRTU, topicIndex, subtopicIndex)}
+                  {renderSection("Golden Example Code", subtopic.goldenExampleCode, topicIndex, subtopicIndex)}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
       </main>
     </div>
+    
   )
 }
