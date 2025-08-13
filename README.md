@@ -1,7 +1,7 @@
 # Policy Viewer
 
 ## Overview
-A Next.js React project for visualizing and exploring data with markdown rendering and interactive components. Purpose is to 
+A Next.js React project for visualizing and exploring data with markdown rendering and interactive components. Purpose is to show policies.
 
 ## Features
 - Next.js Pages Router
